@@ -10,11 +10,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tamagui/config": "2.0.0-rc.16",
+    "@tamagui/core": "2.0.0-rc.16",
+    "@tamagui/web": "2.0.0-rc.16",
+    "appwrite": "^22.4.0",
+    "mingcute_icon": "^2.9.71",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.13.0",
+    "tamagui": "2.0.0-rc.16",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tamagui/static": "2.0.0-rc.16",
+    "@tamagui/vite-plugin": "2.0.0-rc.16",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",

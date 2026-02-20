@@ -1,11 +1,11 @@
 ---
-name: react-vite-tamagui-webapp
-description: Build, scaffold, and evolve TypeScript web applications using React, Vite, Tamagui, Appwrite, and Zustand. Use when the user asks to create a new frontend with this stack, add UI screens/components with Tamagui, configure themes/tokens, integrate Appwrite services, set up routing/state patterns with Zustand, or troubleshoot build/runtime issues in React+Vite+Tamagui+Appwrite+Zustand projects.
+name: react-vite-ant-design-webapp
+description: Build, scaffold, and evolve TypeScript web applications using React, Vite, Ant Design, Appwrite, and Zustand. Use when the user asks to create a new frontend with this stack, add UI screens/components with Ant Design, configure themes/tokens, integrate Appwrite services, set up routing/state patterns with Zustand, or troubleshoot build/runtime issues in React+Vite+Ant Design+Appwrite+Zustand projects.
 ---
 
-# React + Vite + Tamagui Webapp
+# React + Vite + Ant Design Webapp
 
-Follow this workflow to deliver reliable web apps with TypeScript, React, Vite, and Tamagui.
+Follow this workflow to deliver reliable web apps with TypeScript, React, Vite, and Ant Design.
 
 ## 1. Confirm project shape
 
@@ -13,7 +13,7 @@ Capture these defaults unless the user specifies otherwise:
 - Use TypeScript strict mode.
 - Use Vite for dev/build.
 - Use React Router for navigation when multiple pages are needed.
-- Use Tamagui for layout primitives, tokens, and themes.
+- Use Ant Design for UI primitives, form patterns, and design tokens.
 - Use Appwrite as backend platform (authentication, database, storage, and server integrations as required).
 - Use Zustand as the default client state management layer.
 - Use `mingcute_icon` as the default icon library (MingCute).
@@ -21,22 +21,21 @@ Capture these defaults unless the user specifies otherwise:
 
 ## 2. Scaffold or align existing project
 
-For a new app, initialize with Vite React TypeScript and add Tamagui dependencies.
+For a new app, initialize with Vite React TypeScript and add Ant Design dependencies.
 For an existing app:
 - Verify Vite config and TS paths.
-- Add missing Tamagui provider setup.
-- Normalize `App` entry so it renders under `TamaguiProvider`.
+- Verify `antd` styles and `ConfigProvider` setup at app root.
 - Verify Appwrite SDK setup, environment variables, and a single shared client factory.
 - Verify Zustand setup with feature-scoped stores and typed selectors/actions.
 - Verify icons come from `mingcute_icon` unless the user explicitly requests another library.
 
-## 3. Configure Tamagui correctly
+## 3. Configure Ant Design correctly
 
 Implement or verify:
-- `tamagui.config.ts` with tokens and themes.
-- `TamaguiProvider` wired in app root.
-- Reusable UI primitives (for example `Screen`, `Section`, `Card`, `Stack`).
-- Consistent spacing, radius, font, and color tokens.
+- `ConfigProvider` wired in app root with theme token overrides when needed.
+- Optional locale setup and global component size/radius configuration.
+- Reusable wrappers for layout primitives (for example page shell, content section, card wrapper).
+- Consistent spacing, radius, typography, and color token usage.
 
 If theming complexity increases, load `/references/theming-guidelines.md`.
 

@@ -1,6 +1,6 @@
 ---
 name: react-vite-tamagui-webapp
-description: Build, scaffold, and evolve TypeScript web applications using React, Vite, Tamagui, and Appwrite. Use when the user asks to create a new frontend with this stack, add UI screens/components with Tamagui, configure themes/tokens, integrate Appwrite services, set up routing/state patterns, or troubleshoot build/runtime issues in React+Vite+Tamagui+Appwrite projects.
+description: Build, scaffold, and evolve TypeScript web applications using React, Vite, Tamagui, Appwrite, and Zustand. Use when the user asks to create a new frontend with this stack, add UI screens/components with Tamagui, configure themes/tokens, integrate Appwrite services, set up routing/state patterns with Zustand, or troubleshoot build/runtime issues in React+Vite+Tamagui+Appwrite+Zustand projects.
 ---
 
 # React + Vite + Tamagui Webapp
@@ -15,6 +15,8 @@ Capture these defaults unless the user specifies otherwise:
 - Use React Router for navigation when multiple pages are needed.
 - Use Tamagui for layout primitives, tokens, and themes.
 - Use Appwrite as backend platform (authentication, database, storage, and server integrations as required).
+- Use Zustand as the default client state management layer.
+- Use `mingcute_icon` as the default icon library (MingCute).
 - Keep components small and composable.
 
 ## 2. Scaffold or align existing project
@@ -25,6 +27,8 @@ For an existing app:
 - Add missing Tamagui provider setup.
 - Normalize `App` entry so it renders under `TamaguiProvider`.
 - Verify Appwrite SDK setup, environment variables, and a single shared client factory.
+- Verify Zustand setup with feature-scoped stores and typed selectors/actions.
+- Verify icons come from `mingcute_icon` unless the user explicitly requests another library.
 
 ## 3. Configure Tamagui correctly
 
@@ -45,6 +49,9 @@ Structure by feature, not by file type only:
 - `src/lib` for helpers and adapters.
 
 Keep side effects in explicit hooks or services; keep view components declarative.
+Prioritize shared logic through custom hooks.
+Prefer cross-component communication through focused Zustand stores instead of prop drilling.
+For global UI patterns (for example modals), use dedicated stores that control visibility and payload/state so any component can trigger them.
 
 ## 5. Enforce quality gates
 

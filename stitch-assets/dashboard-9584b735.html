@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Billkerfy - Inicio de Sesión</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#038C8C",
+                        "primary-hover": "#027373",
+                        "primary-soft": "#E6F4F4",
+                        "background-light": "#f5f8f8",
+                        "slate-custom": {
+                            50: "#f8fafa",
+                            100: "#f1f5f5",
+                            200: "#e2e9e9",
+                            500: "#64748b",
+                            900: "#0f172a"
+                        }
+                    },
+                    fontFamily: {
+                        display: ["Public Sans"],
+                        sans: ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        "2xl": "1rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+        }
+        :root {
+            --primary-color: #038C8C;
+        }
+        body {
+            background: radial-gradient(circle at top right, #e6f4f4 0%, #f5f8f8 100%);
+        }
+    </style>
+</head>
+<body class="text-slate-900 font-display antialiased min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-[440px]">
+<div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+<div class="p-8 sm:p-10">
+<div class="flex flex-col items-center mb-8">
+<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-teal-100 mb-4">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Billkerfy</h1>
+</div>
+<div class="text-center mb-8">
+<h2 class="text-xl font-bold text-slate-900">Bienvenido de nuevo</h2>
+<p class="text-slate-500 text-sm mt-1">Ingresa tus credenciales para acceder</p>
+</div>
+<form action="#" class="space-y-5" onsubmit="event.preventDefault();">
+<div>
+<label class="block text-sm font-semibold text-slate-700 mb-1.5" for="email">Correo electrónico</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">mail</span>
+</div>
+<input class="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400" id="email" name="email" placeholder="ejemplo@correo.com" type="email"/>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="block text-sm font-semibold text-slate-700" for="password">Contraseña</label>
+<a class="text-xs font-bold text-primary hover:text-primary-hover transition-colors" href="#">¿Olvidaste tu contraseña?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">lock</span>
+</div>
+<input class="block w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400" id="password" name="password" placeholder="••••••••" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<button class="text-slate-400 hover:text-slate-600 transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center">
+<input class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block text-sm text-slate-600" for="remember-me">
+                            Mantener sesión iniciada
+                        </label>
+</div>
+<button class="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white hover:bg-primary-hover shadow-lg shadow-teal-100 transition-all focus:ring-4 focus:ring-primary/20" type="submit">
+                        Iniciar Sesión
+                    </button>
+</form>
+<div class="mt-10 text-center">
+<p class="text-sm text-slate-500">
+                        ¿No tienes una cuenta? 
+                        <a class="font-bold text-primary hover:text-primary-hover transition-colors" href="#">Crear una cuenta nueva</a>
+</p>
+</div>
+</div>
+</div>
+<div class="mt-8 text-center">
+<p class="text-xs text-slate-400 font-medium">© 2024 Billkerfy. Todos los derechos reservados.</p>
+</div>
+</div>
+
+</body></html>

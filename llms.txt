@@ -1,0 +1,71 @@
+# Billkerfy LLM Context
+
+Billkerfy is a React + TypeScript + Vite web project.
+For UI work, use Ant Design as the default component system.
+
+## Project Snapshot
+
+- Stack: React 19, TypeScript, Vite, React Router, Zustand, Appwrite.
+- Package manager: Yarn.
+- Icon preference: MingCute (`@mingcute/react` or `mingcute_icon`).
+- UI direction: Ant Design first, avoid Tamagui for new work.
+
+## Local Commands
+
+- `yarn dev` start local dev server
+- `yarn build` typecheck + production build
+- `yarn lint` run lint checks
+- `yarn preview` preview production build
+
+## Repository Conventions
+
+- Use Atomic Design structure for reusable UI: `atoms`, `molecules`, `organisms`, `templates`, `pages`.
+- Use absolute imports with `@/`.
+- Component folder shape:
+  - `NameComponent/index.tsx`
+  - `NameComponent/NameComponent.types.ts`
+  - `NameComponent/NameComponent.styles.ts`
+- State management: Zustand with focused stores by feature/domain.
+- Use English for identifiers, file names, and code-level text.
+
+## Ant Design Local Guidance
+
+This repository does not rely on external URLs in `llms.txt`.
+Use the local guidance below as the source of truth for Ant Design usage.
+
+### Core Usage
+
+- Prefer Ant Design components for all new UI.
+- Wrap app root with `ConfigProvider` when theme customization is needed.
+- Keep forms based on `Form`, `Input`, `Select`, and validation patterns from Ant Design.
+- Use feedback primitives (`message`, `notification`, `Modal`) for global user feedback.
+
+### Theming and Styling
+
+- Use token-based styling through Ant Design theme configuration.
+- Keep spacing and radius scales consistent across pages and features.
+- Avoid ad-hoc color overrides unless required by UX.
+- Reuse shared layout wrappers instead of duplicating page scaffolding.
+
+### Recommended Component Set
+
+- Foundation: `Button`, `Typography`, `Space`, `Grid`, `Layout`.
+- Data entry: `Form`, `Input`, `InputNumber`, `Select`, `DatePicker`, `Upload`.
+- Data display: `Table`, `Card`, `Tag`, `Tooltip`, `Badge`, `Avatar`.
+- Navigation: `Menu`, `Tabs`, `Breadcrumb`, `Pagination`, `Dropdown`.
+- Feedback: `Alert`, `Modal`, `Drawer`, `message`, `notification`, `Spin`, `Skeleton`.
+
+### UX Defaults
+
+- Default to accessible labels and clear validation states in forms.
+- Keep primary actions explicit and secondary actions visually quieter.
+- Use loading states for async operations and empty states for missing data.
+- Prefer responsive layouts with mobile-safe spacing and controls.
+
+## Implementation Defaults for Agents
+
+- Prefer Ant Design components before creating custom primitives.
+- Keep UI decisions aligned with Ant Design tokens and spacing.
+- Use Zustand for shared UI states (modals, drawers, global filters).
+- Use Appwrite adapters/services for backend integration logic.
+- Do not introduce Tamagui in new changes.

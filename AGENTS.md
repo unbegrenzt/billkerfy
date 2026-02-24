@@ -33,5 +33,5 @@ NameComponent/
 - Use global UI stores for cross-cutting controls (for example modal visibility and modal payload/state) so any component can open or close them.
 
 ## Icons
-- Use MingCute icons as the default and preferred icon set: `https://www.mingcute.com`.
+- Use MingCute icons as the default and preferred icon set: mingcute_icon npm library.
 - When installing an icon package, choose the MingCute package first unless the user explicitly requests a different library.

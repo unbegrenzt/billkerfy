@@ -1,9 +1,7 @@
+import { CreateInvoicePage } from '@/components/pages/CreateInvoicePage'
+
 function App() {
-  return (
-    <main>
-      <h1>Billkerfy</h1>
-    </main>
-  )
+  return <CreateInvoicePage />
 }
 
 export default App

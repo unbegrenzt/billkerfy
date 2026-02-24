@@ -1,0 +1,15 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="billkerfyGradient" x1="28" y1="24" x2="228" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14B8A6"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="12" width="232" height="232" rx="56" fill="url(#billkerfyGradient)"/>
+  <rect x="46" y="72" width="164" height="116" rx="24" fill="white" fill-opacity="0.18"/>
+  <rect x="62" y="92" width="132" height="76" rx="16" fill="white" fill-opacity="0.94"/>
+  <path d="M86 104H132C150.778 104 166 119.222 166 138C166 156.778 150.778 172 132 172H86V104Z" fill="#0F766E"/>
+  <path d="M106 122H130C136.627 122 142 127.373 142 134C142 140.627 136.627 146 130 146H106V122Z" fill="#14B8A6"/>
+  <circle cx="174" cy="130" r="12" fill="#0F766E"/>
+  <path d="M64 52C64 41.5066 72.5066 33 83 33H173C183.493 33 192 41.5066 192 52V60H64V52Z" fill="white" fill-opacity="0.30"/>
+</svg>

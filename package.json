@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mingcute/react": "^1.4.1",
+    "antd": "^6.3.1",
     "appwrite": "^22.4.0",
     "mingcute_icon": "^2.9.71",
     "react": "^19.2.0",

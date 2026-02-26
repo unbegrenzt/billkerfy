@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Card, Flex, Input, Space } from 'antd'
 import { SectionLabel } from '@/components/atoms/SectionLabel'
 import { SummaryRow } from '@/components/atoms/SummaryRow'
@@ -15,6 +15,7 @@ import {
 } from '@/components/pages/CreateInvoicePage/CreateInvoicePage.styles'
 import type { CustomerData } from '@/components/pages/CreateInvoicePage/CreateInvoicePage.types'
 import { InvoiceEditorTemplate } from '@/components/templates/InvoiceEditorTemplate'
+import { useOrganizationsStore } from '@/features/organizations/organizations.store'
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(value)
@@ -31,24 +32,20 @@ function createEmptyLineItem(id: number): InvoiceLineItem {
 }
 
 export function CreateInvoicePage() {
+  const organization = useOrganizationsStore((state) => state.organization)
+  const organizationLoading = useOrganizationsStore((state) => state.isLoading)
+  const organizationError = useOrganizationsStore((state) => state.error)
+  const loadPrimaryOrganization = useOrganizationsStore((state) => state.loadPrimaryOrganization)
   const [issueDate, setIssueDate] = useState('2026-02-24')
   const [dueDate, setDueDate] = useState('2026-03-24')
   const [customerSearch, setCustomerSearch] = useState('')
   const [notes, setNotes] = useState('')
-  const [customer, setCustomer] = useState<CustomerData | null>({
-    companyName: 'Tech Solutions LLC',
-    taxId: 'B87654321',
-    address: '123 Diagonal Avenue, Barcelona',
-  })
-  const [lineItems, setLineItems] = useState<InvoiceLineItem[]>([
-    {
-      id: 'line-1',
-      description: 'Monthly Strategy Consulting',
-      quantity: 1,
-      unitPrice: 1200,
-      taxRate: 21,
-    },
-  ])
+  const [customer, setCustomer] = useState<CustomerData | null>(null)
+  const [lineItems, setLineItems] = useState<InvoiceLineItem[]>([createEmptyLineItem(1)])
+
+  useEffect(() => {
+    void loadPrimaryOrganization()
+  }, [loadPrimaryOrganization])
 
   const subtotal = useMemo(
     () => lineItems.reduce((accumulator, item) => accumulator + item.quantity * item.unitPrice, 0),
@@ -93,6 +90,9 @@ export function CreateInvoicePage() {
   return (
     <InvoiceEditorTemplate
       pageTitle="Create New Invoice"
+      organization={organization}
+      organizationLoading={organizationLoading}
+      organizationError={organizationError}
       metaFields={
         <InvoiceMetaFields
           invoiceNumber="#INV-2026-001"

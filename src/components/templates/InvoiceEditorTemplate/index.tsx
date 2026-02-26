@@ -30,12 +30,17 @@ const menuItems = [
 
 export function InvoiceEditorTemplate({
   pageTitle,
+  organization,
+  organizationLoading,
+  organizationError,
   metaFields,
   customerSection,
   lineItemsSection,
   notesAndSummarySection,
   actionsBar,
 }: InvoiceEditorTemplateProps) {
+  const organizationName = organization?.tradeName ?? organization?.legalName ?? 'Organization'
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout.Sider theme="light" width={250} breakpoint="lg" collapsedWidth={0}>
@@ -68,12 +73,26 @@ export function InvoiceEditorTemplate({
               <Flex justify="space-between" gap={24} wrap style={{ marginBottom: 24 }}>
                 <div style={companyBlockStyle}>
                   <Typography.Title level={3} style={{ margin: 0 }}>
-                    Billkerfy
+                    {organizationName}
                   </Typography.Title>
-                  <Typography.Text strong>Billkerfy LLC</Typography.Text>
-                  <Typography.Text type="secondary">42 Innovation Avenue</Typography.Text>
-                  <Typography.Text type="secondary">Madrid, Spain</Typography.Text>
-                  <Typography.Text type="secondary">Tax ID: B12345678</Typography.Text>
+                  <Typography.Text strong>
+                    {organization?.legalName ?? 'No organization configured'}
+                  </Typography.Text>
+                  <Typography.Text type="secondary">
+                    {organization?.addressLine1 ?? '-'}
+                  </Typography.Text>
+                  <Typography.Text type="secondary">
+                    {organization ? `${organization.city}, ${organization.country}` : '-'}
+                  </Typography.Text>
+                  <Typography.Text type="secondary">
+                    Tax ID: {organization?.taxId ?? '-'}
+                  </Typography.Text>
+                  {organizationLoading ? (
+                    <Typography.Text type="secondary">Loading organization data...</Typography.Text>
+                  ) : null}
+                  {organizationError ? (
+                    <Typography.Text type="danger">{organizationError}</Typography.Text>
+                  ) : null}
                 </div>
                 <div style={{ flex: 1, minWidth: 320 }}>{metaFields}</div>
               </Flex>

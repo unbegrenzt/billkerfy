@@ -105,7 +105,7 @@ Database ID suggestion: `billkerfy`.
 - `addressLine1` (string, required)
 - `city` (string, required)
 - `country` (string, required)
-- `currencyCode` (string, required, default `EUR`)
+- `currencyCode` (string, required)
 
 Indexes:
 - unique: `taxId` scoped by `ownerUserId` (or composite index if available)
@@ -135,8 +135,8 @@ Indexes:
 - `subtotalAmount` (double, required)
 - `taxAmount` (double, required)
 - `totalAmount` (double, required)
-- `amountPaid` (double, required, default `0`)
-- `currencyCode` (string, required, default `EUR`)
+- `amountPaid` (double, required)
+- `currencyCode` (string, required)
 - `issuedAt` (datetime)
 - `paidAt` (datetime)
 
@@ -198,3 +198,7 @@ Indexes:
 3. Mark as paid:
 - append `payments`
 - recompute `amountPaid` and invoice status
+
+## Implementation Note (Appwrite)
+
+Appwrite does not allow default values on `required` attributes for this schema setup. `currencyCode` (expected `EUR`) and `amountPaid` (expected `0`) must be initialized by application logic when creating rows.

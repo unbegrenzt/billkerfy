@@ -1,0 +1,86 @@
+erDiagram
+    USERS ||--o{ ORGANIZATIONS : owns
+    ORGANIZATIONS ||--o{ CUSTOMERS : manages
+    ORGANIZATIONS ||--o{ INVOICES : emits
+    CUSTOMERS ||--o{ INVOICES : billed_on
+    INVOICES ||--|{ INVOICE_LINE_ITEMS : contains
+    INVOICES ||--o{ PAYMENTS : settles
+
+    USERS {
+      string userId PK
+      string email
+      string name
+      datetime createdAt
+    }
+
+    ORGANIZATIONS {
+      string organizationId PK
+      string ownerUserId FK
+      string legalName
+      string tradeName
+      string taxId
+      string addressLine1
+      string city
+      string country
+      string currencyCode
+      datetime createdAt
+      datetime updatedAt
+    }
+
+    CUSTOMERS {
+      string customerId PK
+      string organizationId FK
+      string companyName
+      string taxId
+      string address
+      string email
+      string phone
+      datetime createdAt
+      datetime updatedAt
+    }
+
+    INVOICES {
+      string invoiceId PK
+      string organizationId FK
+      string customerId FK
+      string invoiceNumber
+      string status
+      date issueDate
+      date dueDate
+      string notes
+      float subtotalAmount
+      float taxAmount
+      float totalAmount
+      float amountPaid
+      string currencyCode
+      datetime issuedAt
+      datetime paidAt
+      datetime createdAt
+      datetime updatedAt
+    }
+
+    INVOICE_LINE_ITEMS {
+      string lineItemId PK
+      string invoiceId FK
+      int lineOrder
+      string description
+      float quantity
+      float unitPrice
+      float taxRate
+      float lineSubtotal
+      float lineTaxAmount
+      float lineTotal
+      datetime createdAt
+      datetime updatedAt
+    }
+
+    PAYMENTS {
+      string paymentId PK
+      string invoiceId FK
+      float amount
+      date paymentDate
+      string method
+      string reference
+      string notes
+      datetime createdAt
+    }

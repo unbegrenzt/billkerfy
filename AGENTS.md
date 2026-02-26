@@ -35,3 +35,9 @@ NameComponent/
 ## Icons
 - Use MingCute icons as the default and preferred icon set: mingcute_icon npm library.
 - When installing an icon package, choose the MingCute package first unless the user explicitly requests a different library.
+
+## Data Model Reference
+- Treat the Mermaid diagram in `/Users/unbegrenzt/Documents/GitHub/Billkerfy/docs/database-model.md` as the canonical reference for the Appwrite database structure.
+- Assume that the Appwrite data model should match the Mermaid ER model unless the user explicitly requests otherwise.
+- When adding or changing Appwrite collections, attributes, relations, or statuses, update the Mermaid diagram in `docs/database-model.md` in the same change.
+- Before implementing data-layer changes, review `docs/database-model.md` first to align naming and relationships.

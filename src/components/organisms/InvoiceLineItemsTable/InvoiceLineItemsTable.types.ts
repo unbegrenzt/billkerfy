@@ -8,6 +8,7 @@ export type InvoiceLineItem = {
 
 export type InvoiceLineItemsTableProps = {
   items: InvoiceLineItem[]
+  currencyCode: string
   onItemChange: <K extends keyof InvoiceLineItem>(
     id: string,
     field: K,

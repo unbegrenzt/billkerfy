@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Button, Card, Flex, Input, Space } from 'antd'
+import { AutoComplete, Button, Card, Flex, Input, Space, Typography } from 'antd'
 import { SectionLabel } from '@/components/atoms/SectionLabel'
 import { SummaryRow } from '@/components/atoms/SummaryRow'
 import { CustomerPreviewCard } from '@/components/molecules/CustomerPreviewCard'
@@ -15,10 +15,18 @@ import {
 } from '@/components/pages/CreateInvoicePage/CreateInvoicePage.styles'
 import type { CustomerData } from '@/components/pages/CreateInvoicePage/CreateInvoicePage.types'
 import { InvoiceEditorTemplate } from '@/components/templates/InvoiceEditorTemplate'
+import { useCustomersStore } from '@/features/customers/customers.store'
 import { useOrganizationsStore } from '@/features/organizations/organizations.store'
+import type { Customer } from '@/features/customers/customers.types'
+import { formatCurrencyAmount } from '@/lib/currency'
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(value)
+function mapCustomerData(customer: Customer): CustomerData {
+  return {
+    id: customer.$id,
+    companyName: customer.companyName,
+    taxId: customer.taxId ?? '-',
+    address: customer.address,
+  }
 }
 
 function createEmptyLineItem(id: number): InvoiceLineItem {
@@ -36,6 +44,11 @@ export function CreateInvoicePage() {
   const organizationLoading = useOrganizationsStore((state) => state.isLoading)
   const organizationError = useOrganizationsStore((state) => state.error)
   const loadPrimaryOrganization = useOrganizationsStore((state) => state.loadPrimaryOrganization)
+  const customers = useCustomersStore((state) => state.customers)
+  const customersLoading = useCustomersStore((state) => state.isLoading)
+  const customersError = useCustomersStore((state) => state.error)
+  const loadCustomersByOrganization = useCustomersStore((state) => state.loadCustomersByOrganization)
+  const addCustomer = useCustomersStore((state) => state.addCustomer)
   const [issueDate, setIssueDate] = useState('2026-02-24')
   const [dueDate, setDueDate] = useState('2026-03-24')
   const [customerSearch, setCustomerSearch] = useState('')
@@ -46,6 +59,34 @@ export function CreateInvoicePage() {
   useEffect(() => {
     void loadPrimaryOrganization()
   }, [loadPrimaryOrganization])
+
+  useEffect(() => {
+    if (!organization?.$id) {
+      return
+    }
+
+    void loadCustomersByOrganization(organization.$id)
+  }, [organization?.$id, loadCustomersByOrganization])
+
+  const currencyCode = organization?.currencyCode ?? 'EUR'
+
+  const filteredCustomers = useMemo(() => {
+    const query = customerSearch.trim().toLowerCase()
+    if (!query) {
+      return customers
+    }
+
+    return customers.filter((item) => item.companyName.toLowerCase().includes(query))
+  }, [customerSearch, customers])
+
+  const customerOptions = useMemo(
+    () =>
+      filteredCustomers.map((item) => ({
+        value: item.companyName,
+        label: `${item.companyName} (${item.taxId ?? '-'})`,
+      })),
+    [filteredCustomers],
+  )
 
   const subtotal = useMemo(
     () => lineItems.reduce((accumulator, item) => accumulator + item.quantity * item.unitPrice, 0),
@@ -87,6 +128,39 @@ export function CreateInvoicePage() {
     })
   }
 
+  const handleSelectCustomer = (customerId: string) => {
+    const match = customers.find((item) => item.$id === customerId)
+    if (!match) {
+      return
+    }
+
+    setCustomer(mapCustomerData(match))
+    setCustomerSearch(match.companyName)
+  }
+
+  const handleSelectCustomerByName = (companyName: string) => {
+    const match = customers.find((item) => item.companyName === companyName)
+    if (!match) {
+      return
+    }
+
+    handleSelectCustomer(match.$id)
+  }
+
+  const handleAddCustomer = async () => {
+    const companyName = customerSearch.trim()
+    if (!companyName || !organization?.$id) {
+      return
+    }
+
+    const customerRecord = await addCustomer(organization.$id, companyName)
+    if (!customerRecord) {
+      return
+    }
+
+    setCustomer(mapCustomerData(customerRecord))
+  }
+
   return (
     <InvoiceEditorTemplate
       pageTitle="Create New Invoice"
@@ -106,13 +180,24 @@ export function CreateInvoicePage() {
         <div style={customerSectionStyle}>
           <SectionLabel text="Customer Details" />
           <Flex gap={8}>
-            <Input
-              placeholder="Search customer..."
+            <AutoComplete
+              style={{ width: '100%' }}
+              options={customerOptions}
               value={customerSearch}
-              onChange={(event) => setCustomerSearch(event.target.value)}
-            />
-            <Button>Add New</Button>
+              onSelect={handleSelectCustomerByName}
+              onChange={setCustomerSearch}
+            >
+              <Input placeholder="Search customer..." />
+            </AutoComplete>
+            <Button onClick={handleAddCustomer}>Add New</Button>
           </Flex>
+          {customersLoading ? <Typography.Text type="secondary">Loading customers...</Typography.Text> : null}
+          {customersError ? <Typography.Text type="danger">{customersError}</Typography.Text> : null}
+          {!customer && customerSearch.trim() && filteredCustomers.length === 0 ? (
+            <Typography.Text type="secondary">
+              No matches found. Click Add New to create "{customerSearch.trim()}".
+            </Typography.Text>
+          ) : null}
           {customer ? (
             <CustomerPreviewCard
               companyName={customer.companyName}
@@ -126,6 +211,7 @@ export function CreateInvoicePage() {
       lineItemsSection={
         <InvoiceLineItemsTable
           items={lineItems}
+          currencyCode={currencyCode}
           onItemChange={handleLineItemChange}
           onAddItem={handleAddLineItem}
           onRemoveItem={handleRemoveLineItem}
@@ -144,9 +230,13 @@ export function CreateInvoicePage() {
           </div>
           <Card size="small">
             <Space direction="vertical" size={12} style={{ width: '100%' }}>
-              <SummaryRow label="Subtotal" value={formatCurrency(subtotal)} />
-              <SummaryRow label="Tax" value={formatCurrency(taxTotal)} />
-              <SummaryRow label="Total" value={formatCurrency(totalAmount)} emphasized />
+              <SummaryRow label="Subtotal" value={formatCurrencyAmount(subtotal, currencyCode)} />
+              <SummaryRow label="Tax" value={formatCurrencyAmount(taxTotal, currencyCode)} />
+              <SummaryRow
+                label="Total"
+                value={formatCurrencyAmount(totalAmount, currencyCode)}
+                emphasized
+              />
             </Space>
           </Card>
         </div>

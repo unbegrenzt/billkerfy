@@ -5,13 +5,11 @@ import type {
   InvoiceLineItem,
   InvoiceLineItemsTableProps,
 } from '@/components/organisms/InvoiceLineItemsTable/InvoiceLineItemsTable.types'
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(value)
-}
+import { formatCurrencyAmount, getCurrencySymbol } from '@/lib/currency'
 
 export function InvoiceLineItemsTable({
   items,
+  currencyCode,
   onItemChange,
   onAddItem,
   onRemoveItem,
@@ -50,6 +48,7 @@ export function InvoiceLineItemsTable({
         <InputNumber
           min={0}
           step={10}
+          prefix={getCurrencySymbol(currencyCode)}
           value={item.unitPrice}
           onChange={(value) => onItemChange(item.id, 'unitPrice', value ?? 0)}
           style={{ width: '100%' }}
@@ -79,7 +78,7 @@ export function InvoiceLineItemsTable({
         const lineSubtotal = item.quantity * item.unitPrice
         const lineTotal = lineSubtotal + lineSubtotal * (item.taxRate / 100)
 
-        return <Typography.Text strong>{formatCurrency(lineTotal)}</Typography.Text>
+        return <Typography.Text strong>{formatCurrencyAmount(lineTotal, currencyCode)}</Typography.Text>
       },
     },
     {

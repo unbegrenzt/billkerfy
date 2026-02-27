@@ -1,23 +1,27 @@
 import { create } from 'zustand'
 import {
+  createInvoice,
   fetchInvoicesByOrganization,
   updateInvoiceStatus,
 } from '@/features/invoices/invoices.service'
-import type { Invoice } from '@/features/invoices/invoices.types'
+import type { CreateInvoiceInput, Invoice } from '@/features/invoices/invoices.types'
 
 type InvoicesState = {
   invoices: Invoice[]
   isLoading: boolean
   isSavingStatus: boolean
+  isCreating: boolean
   error: string | null
   loadInvoicesByOrganization: (organizationId: string) => Promise<void>
   saveInvoiceStatus: (invoiceId: string, status: Invoice['status']) => Promise<void>
+  createInvoiceEntry: (input: CreateInvoiceInput) => Promise<Invoice | null>
 }
 
 export const useInvoicesStore = create<InvoicesState>((set) => ({
   invoices: [],
   isLoading: false,
   isSavingStatus: false,
+  isCreating: false,
   error: null,
   loadInvoicesByOrganization: async (organizationId: string) => {
     set({ isLoading: true, error: null })
@@ -45,6 +49,23 @@ export const useInvoicesStore = create<InvoicesState>((set) => ({
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update invoice status'
       set({ isSavingStatus: false, error: errorMessage })
+    }
+  },
+  createInvoiceEntry: async (input: CreateInvoiceInput) => {
+    set({ isCreating: true, error: null })
+
+    try {
+      const createdInvoice = await createInvoice(input)
+      set((state) => ({
+        invoices: [createdInvoice, ...state.invoices],
+        isCreating: false,
+        error: null,
+      }))
+      return createdInvoice
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create invoice'
+      set({ isCreating: false, error: errorMessage })
+      return null
     }
   },
 }))

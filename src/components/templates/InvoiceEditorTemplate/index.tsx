@@ -1,12 +1,13 @@
 import { Breadcrumb, Card, Flex, Layout, Menu, Typography } from 'antd'
-import { Link } from 'react-router-dom'
+import type { MenuProps } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   companyBlockStyle,
   invoiceEditorBodyStyle,
 } from '@/components/templates/InvoiceEditorTemplate/InvoiceEditorTemplate.styles'
 import type { InvoiceEditorTemplateProps } from '@/components/templates/InvoiceEditorTemplate/InvoiceEditorTemplate.types'
 
-const menuItems = [
+const menuItems: MenuProps['items'] = [
   {
     key: 'dashboard',
     label: 'Dashboard',
@@ -40,7 +41,19 @@ export function InvoiceEditorTemplate({
   notesAndSummarySection,
   actionsBar,
 }: InvoiceEditorTemplateProps) {
+  const navigate = useNavigate()
   const organizationName = organization?.tradeName ?? organization?.legalName ?? 'Organization'
+
+  const handleMenuSelect: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'dashboard') {
+      navigate('/dashboard')
+      return
+    }
+
+    if (key === 'invoices') {
+      navigate('/invoices')
+    }
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -58,7 +71,7 @@ export function InvoiceEditorTemplate({
               Billkerfy
             </Typography.Title>
           </Flex>
-          <Menu mode="inline" defaultSelectedKeys={['invoices']} items={menuItems} />
+          <Menu mode="inline" selectedKeys={['invoices']} items={menuItems} onClick={handleMenuSelect} />
         </Flex>
       </Layout.Sider>
       <Layout>

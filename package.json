@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/charts": "^2.6.7",
     "@mingcute/react": "^1.4.1",
     "antd": "^6.3.1",
     "appwrite": "^22.4.0",
@@ -17,6 +18,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
+    "tslib": "^2.8.1",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

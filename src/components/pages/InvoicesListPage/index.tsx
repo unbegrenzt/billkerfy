@@ -14,6 +14,7 @@ import {
   Tag,
   Typography,
 } from 'antd'
+import type { MenuProps } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -56,7 +57,7 @@ const statusIconByValue: Record<string, string> = {
   void: 'mgc_close_circle_line',
 }
 
-const menuItems = [
+const menuItems: MenuProps['items'] = [
   {
     key: 'dashboard',
     label: 'Dashboard',
@@ -112,6 +113,17 @@ export function InvoicesListPage() {
   const [statusModalOpen, setStatusModalOpen] = useState(false)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [statusDraft, setStatusDraft] = useState<'draft' | 'issued' | 'paid' | 'void'>('draft')
+
+  const handleMenuSelect: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'dashboard') {
+      navigate('/dashboard')
+      return
+    }
+
+    if (key === 'invoices') {
+      navigate('/invoices')
+    }
+  }
 
   useEffect(() => {
     void loadPrimaryOrganization()
@@ -289,7 +301,7 @@ export function InvoicesListPage() {
               Billkerfy
             </Typography.Title>
           </Flex>
-          <Menu mode="inline" defaultSelectedKeys={['invoices']} items={menuItems} />
+          <Menu mode="inline" selectedKeys={['invoices']} items={menuItems} onClick={handleMenuSelect} />
         </Flex>
       </Layout.Sider>
       <Layout>

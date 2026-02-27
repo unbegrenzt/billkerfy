@@ -1,11 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CreateInvoicePage } from '@/components/pages/CreateInvoicePage'
+import { DashboardPage } from '@/components/pages/DashboardPage'
 import { InvoicesListPage } from '@/components/pages/InvoicesListPage'
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/invoices" replace />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/invoices" element={<InvoicesListPage />} />
       <Route path="/invoices/new" element={<CreateInvoicePage />} />
     </Routes>

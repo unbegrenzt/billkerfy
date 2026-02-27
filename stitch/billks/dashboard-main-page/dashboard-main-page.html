@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html class="" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Billkerfy - Dashboard Ingresos</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#038C8C",
+                        "primary-hover": "#027373",
+                        "primary-soft": "#E6F4F4",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#0f2323",
+                        "slate-custom": {
+                            50: "#f8fafa",
+                            100: "#f1f5f5",
+                            200: "#e2e9e9",
+                            500: "#64748b",
+                            900: "#0f172a"
+                        }
+                    },
+                    fontFamily: {
+                        display: ["Public Sans"],
+                        sans: ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            .fill-1 {
+                font-variation-settings: 'FILL' 1;
+            }
+        }
+        :root {
+            --primary-color: #038C8C;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-slate-900 font-display antialiased">
+<div class="flex min-h-screen w-full flex-row overflow-hidden bg-background-light">
+<aside class="hidden w-64 flex-col border-r border-slate-200 bg-white lg:flex sticky top-0 h-screen">
+<div class="flex h-16 items-center gap-3 border-b border-slate-100 px-6">
+<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900">Billkerfy</h1>
+</div>
+<div class="flex flex-1 flex-col justify-between p-4">
+<nav class="flex flex-col gap-3">
+<a class="flex items-center gap-3 rounded-lg bg-primary px-3 py-3 text-white font-semibold transition-colors" href="#">
+<span class="material-symbols-outlined fill-1">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-3 text-slate-500 font-medium hover:bg-primary-soft hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                    Facturas
+                </a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-3 text-slate-500 font-medium hover:bg-primary-soft hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Clientes
+                </a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-3 text-slate-500 font-medium hover:bg-primary-soft hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Configuración
+                </a>
+</nav>
+<div class="flex flex-col gap-4">
+<div class="rounded-xl bg-slate-50 p-4 border border-slate-100">
+<div class="flex items-center gap-3 mb-3">
+<div class="h-8 w-8 rounded-full bg-slate-200 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDy8WodNUbiiiTSY8gagJFaaPGIg7t910wGqAA0-I_Z0j60EMCB76hL24HVFzfXtiE7a4AeLJLMze81T0PFtGB6p4z7X6Bpx7jz0__IcbxVyM-GLSUuUdU-6_bl6qV0ZSh-bdwjq2WBhkSuDLr5iQwGCxZpxIQkhpdf4e-REeGoZXJKcL7LeirY4dkp-cUtGD45dw-PmgG4uXzkWVwn-9fTR1SQfShPm6rSg8ZKeZIGl7y60-xCp2mTPrOwhmRwoN0-6zQv0brJeNA');"></div>
+<div>
+<p class="text-sm font-semibold text-slate-900">Alex Morgan</p>
+<p class="text-xs text-slate-500">Plan Profesional</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-1.5 text-xs font-medium text-slate-600 hover:bg-primary-soft hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">logout</span>
+                        Cerrar Sesión
+                    </button>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<header class="flex lg:hidden items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sticky top-0 z-10">
+<div class="flex items-center gap-2">
+<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<span class="font-bold text-slate-900">Billkerfy</span>
+</div>
+<button class="text-slate-500">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<div class="p-6 lg:p-10 max-w-[1400px] mx-auto w-full flex flex-col gap-8">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Panel de Ingresos</h2>
+<p class="text-slate-500 mt-1">Bienvenido de nuevo, aquí tienes el resumen de tu facturación.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                        Exportar
+                    </button>
+<button class="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover shadow-sm shadow-teal-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Nueva Factura
+                    </button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +12%
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-500">Total Facturado</p>
+<h3 class="mt-1 text-2xl font-bold text-slate-900">€24,500.00</h3>
+</div>
+<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-50 text-cyan-700">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +5%
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-500">Pendiente de Cobro</p>
+<h3 class="mt-1 text-2xl font-bold text-slate-900">€3,250.00</h3>
+</div>
+<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 text-rose-700">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<span class="flex items-center gap-1 rounded-full bg-rose-50 px-2 py-1 text-xs font-medium text-rose-700">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+                            +2%
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-500">Facturas Vencidas</p>
+<h3 class="mt-1 text-2xl font-bold text-slate-900">€450.00</h3>
+</div>
+<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<span class="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +4%
+                        </span>
+</div>
+<p class="text-sm font-medium text-slate-500">Clientes Activos</p>
+<h3 class="mt-1 text-2xl font-bold text-slate-900">128</h3>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="xl:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h3 class="text-lg font-bold text-slate-900">Evolución de Ingresos</h3>
+<p class="text-sm text-slate-500">Comportamiento de facturación últimos 6 meses</p>
+</div>
+<div class="flex items-center gap-4">
+<select class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-slate-700 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6">
+<option>Últimos 6 meses</option>
+<option>Este año</option>
+<option>Año pasado</option>
+</select>
+</div>
+</div>
+<div class="relative h-72 w-full mt-4">
+<div class="absolute inset-0 flex flex-col justify-between text-xs text-slate-400 font-medium z-0 pl-8 pb-6">
+<div class="border-b border-dashed border-slate-100 w-full h-0 flex items-center"><span class="-ml-8">12k</span></div>
+<div class="border-b border-dashed border-slate-100 w-full h-0 flex items-center"><span class="-ml-8">9k</span></div>
+<div class="border-b border-dashed border-slate-100 w-full h-0 flex items-center"><span class="-ml-8">6k</span></div>
+<div class="border-b border-dashed border-slate-100 w-full h-0 flex items-center"><span class="-ml-8">3k</span></div>
+<div class="border-b border-slate-100 w-full h-0 flex items-center"><span class="-ml-8">0</span></div>
+</div>
+<div class="absolute inset-0 pl-8 pb-6 z-10">
+<svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="areaGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#038C8C;stop-opacity:0.2"></stop>
+<stop offset="100%" style="stop-color:#038C8C;stop-opacity:0.0"></stop>
+</linearGradient>
+</defs>
+<path d="M0,100 L0,70 L20,40 L40,65 L60,25 L80,35 L100,10 L100,100 Z" fill="url(#areaGradient)"></path>
+<path d="M0,70 L20,40 L40,65 L60,25 L80,35 L100,10" fill="none" stroke="#038C8C" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<circle cx="0" cy="70" fill="white" r="3" stroke="#038C8C" stroke-width="2"></circle>
+<circle cx="20" cy="40" fill="white" r="3" stroke="#038C8C" stroke-width="2"></circle>
+<circle cx="40" cy="65" fill="white" r="3" stroke="#038C8C" stroke-width="2"></circle>
+<circle cx="60" cy="25" fill="white" r="3" stroke="#038C8C" stroke-width="2"></circle>
+<circle cx="80" cy="35" fill="white" r="3" stroke="#038C8C" stroke-width="2"></circle>
+<circle cx="100" cy="10" fill="white" r="3" stroke="#038C8C" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="absolute top-[20%] left-[60%] -translate-x-1/2 -translate-y-full mb-2 bg-slate-900 text-white text-xs rounded py-1 px-2 shadow-lg pointer-events-none">
+                            €9,250
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 flex justify-between pl-8 pt-2 text-xs font-semibold text-slate-500">
+<span class="w-full text-center sm:text-left">Ene</span>
+<span class="w-full text-center">Feb</span>
+<span class="w-full text-center">Mar</span>
+<span class="w-full text-center">Abr</span>
+<span class="w-full text-center">May</span>
+<span class="w-full text-center sm:text-right">Jun</span>
+</div>
+</div>
+</div>
+<div class="xl:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col h-full">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-bold text-slate-900">Actividad Reciente</h3>
+<a class="text-sm font-semibold text-primary hover:underline transition-colors" href="#">Ver todo</a>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto">
+<div class="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-primary-soft transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-white group-hover:text-primary group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Tech Solutions SL</p>
+<p class="text-xs text-slate-500">Factura #INV-2024-001</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<p class="text-sm font-bold text-slate-900">€1,200.00</p>
+<span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Pagada</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-primary-soft transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-white group-hover:text-primary group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Consultoría Pérez</p>
+<p class="text-xs text-slate-500">Factura #INV-2024-002</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<p class="text-sm font-bold text-slate-900">€850.00</p>
+<span class="inline-flex items-center rounded-md bg-cyan-50 px-2 py-0.5 text-xs font-medium text-cyan-700 ring-1 ring-inset ring-cyan-600/20">Pendiente</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-primary-soft transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-white group-hover:text-primary group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Diseños Creativos</p>
+<p class="text-xs text-slate-500">Factura #INV-2024-003</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<p class="text-sm font-bold text-slate-900">€2,400.00</p>
+<span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Pagada</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-primary-soft transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-white group-hover:text-primary group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Global Imports</p>
+<p class="text-xs text-slate-500">Factura #INV-2024-004</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<p class="text-sm font-bold text-slate-900">€320.00</p>
+<span class="inline-flex items-center rounded-md bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700 ring-1 ring-inset ring-rose-600/20">Atrasada</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

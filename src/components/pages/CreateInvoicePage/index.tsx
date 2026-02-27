@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AutoComplete, Button, Card, Flex, Input, Space, Typography } from 'antd'
+import { useNavigate } from 'react-router-dom'
 import { SectionLabel } from '@/components/atoms/SectionLabel'
 import { SummaryRow } from '@/components/atoms/SummaryRow'
 import { CustomerPreviewCard } from '@/components/molecules/CustomerPreviewCard'
@@ -40,6 +41,7 @@ function createEmptyLineItem(id: number): InvoiceLineItem {
 }
 
 export function CreateInvoicePage() {
+  const navigate = useNavigate()
   const organization = useOrganizationsStore((state) => state.organization)
   const organizationLoading = useOrganizationsStore((state) => state.isLoading)
   const organizationError = useOrganizationsStore((state) => state.error)
@@ -304,7 +306,7 @@ export function CreateInvoicePage() {
       }
       actionsBar={
         <InvoiceActionsBar
-          onCancel={() => undefined}
+          onCancel={() => navigate('/invoices')}
           onSaveDraft={() => undefined}
           onIssueInvoice={() => undefined}
           onIssueAndMarkPaid={() => undefined}

@@ -36,8 +36,10 @@ export async function createCustomer(input: CreateCustomerInput): Promise<Custom
     data: {
       organizationId: input.organizationId,
       companyName: input.companyName,
-      taxId: `AUTO-${code}`,
-      address: 'Pending address',
+      taxId: input.taxId?.trim() || `AUTO-${code}`,
+      address: input.address?.trim() || 'Pending address',
+      email: input.email?.trim() || null,
+      phone: input.phone?.trim() || null,
     },
   })
 
@@ -45,15 +47,31 @@ export async function createCustomer(input: CreateCustomerInput): Promise<Custom
 }
 
 export async function updateCustomer(input: UpdateCustomerInput): Promise<Customer> {
+  const data: Record<string, string | null> = {
+    taxId: input.taxId,
+    address: input.address,
+    email: input.email?.trim() || null,
+    phone: input.phone?.trim() || null,
+  }
+
+  if (input.companyName?.trim()) {
+    data.companyName = input.companyName.trim()
+  }
+
   const response = await tablesDB.updateRow({
     databaseId: DATABASE_ID,
     tableId: CUSTOMERS_TABLE_ID,
     rowId: input.customerId,
-    data: {
-      taxId: input.taxId,
-      address: input.address,
-    },
+    data,
   })
 
   return mapCustomerRow(response as unknown as Record<string, unknown> & { $id: string })
+}
+
+export async function deleteCustomer(customerId: string): Promise<void> {
+  await tablesDB.deleteRow({
+    databaseId: DATABASE_ID,
+    tableId: CUSTOMERS_TABLE_ID,
+    rowId: customerId,
+  })
 }

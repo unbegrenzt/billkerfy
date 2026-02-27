@@ -61,6 +61,16 @@ const avatarPalette = [
   { background: '#ffe4e6', color: '#be123c' },
 ]
 
+type UpsertMode = 'create' | 'edit'
+
+type CustomerFormState = {
+  companyName: string
+  taxId: string
+  address: string
+  email: string
+  phone: string
+}
+
 function isValidDate(value: string) {
   const parsed = new Date(value)
   return !Number.isNaN(parsed.getTime())
@@ -115,6 +125,16 @@ function groupInvoicesByCustomer(invoices: Invoice[]) {
   return { totalsByCustomer, firstIssueDateByCustomer }
 }
 
+function emptyCustomerForm(): CustomerFormState {
+  return {
+    companyName: '',
+    taxId: '',
+    address: '',
+    email: '',
+    phone: '',
+  }
+}
+
 export function CustomersPage() {
   const navigate = useNavigate()
   const organization = useOrganizationsStore((state) => state.organization)
@@ -126,19 +146,21 @@ export function CustomersPage() {
   const customersError = useCustomersStore((state) => state.error)
   const loadCustomersByOrganization = useCustomersStore((state) => state.loadCustomersByOrganization)
   const addCustomer = useCustomersStore((state) => state.addCustomer)
-  const saveCustomerDetails = useCustomersStore((state) => state.saveCustomerDetails)
+  const saveCustomerProfile = useCustomersStore((state) => state.saveCustomerProfile)
+  const removeCustomer = useCustomersStore((state) => state.removeCustomer)
   const invoices = useInvoicesStore((state) => state.invoices)
   const invoicesLoading = useInvoicesStore((state) => state.isLoading)
   const invoicesError = useInvoicesStore((state) => state.error)
   const loadInvoicesByOrganization = useInvoicesStore((state) => state.loadInvoicesByOrganization)
   const [search, setSearch] = useState('')
-  const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [newCustomerName, setNewCustomerName] = useState('')
-  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false)
-  const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null)
-  const [editTaxId, setEditTaxId] = useState('')
-  const [editAddress, setEditAddress] = useState('')
-  const [isSavingEdit, setIsSavingEdit] = useState(false)
+  const [upsertMode, setUpsertMode] = useState<UpsertMode>('create')
+  const [upsertModalOpen, setUpsertModalOpen] = useState(false)
+  const [upsertCustomerId, setUpsertCustomerId] = useState<string | null>(null)
+  const [upsertForm, setUpsertForm] = useState<CustomerFormState>(emptyCustomerForm())
+  const [isSubmittingUpsert, setIsSubmittingUpsert] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [deleteCustomerId, setDeleteCustomerId] = useState<string | null>(null)
+  const [isDeletingCustomer, setIsDeletingCustomer] = useState(false)
 
   useEffect(() => {
     void loadPrimaryOrganization()
@@ -226,6 +248,39 @@ export function CustomersPage() {
   const activeCustomers = useMemo(() => rows.filter((row) => row.billedTotal > 0).length, [rows])
   const averageBilling = activeCustomers ? totalBilled / activeCustomers : 0
 
+  const selectedDeleteCustomerName = useMemo(() => {
+    if (!deleteCustomerId) {
+      return ''
+    }
+
+    return customers.find((item) => item.$id === deleteCustomerId)?.companyName ?? ''
+  }, [customers, deleteCustomerId])
+
+  const openCreateCustomerModal = () => {
+    setUpsertMode('create')
+    setUpsertCustomerId(null)
+    setUpsertForm(emptyCustomerForm())
+    setUpsertModalOpen(true)
+  }
+
+  const openEditCustomerModal = (customerId: string) => {
+    const customer = customers.find((item) => item.$id === customerId)
+    if (!customer) {
+      return
+    }
+
+    setUpsertMode('edit')
+    setUpsertCustomerId(customerId)
+    setUpsertForm({
+      companyName: customer.companyName,
+      taxId: customer.taxId ?? '',
+      address: customer.address ?? '',
+      email: customer.email ?? '',
+      phone: customer.phone ?? '',
+    })
+    setUpsertModalOpen(true)
+  }
+
   const columns: ColumnsType<CustomerTableRow> = [
     {
       title: 'Cliente',
@@ -294,22 +349,15 @@ export function CustomersPage() {
           <Button
             type="text"
             icon={<i className="mgc_edit_3_line" style={{ fontSize: 18 }} />}
-            onClick={() => {
-              const customer = customers.find((item) => item.$id === row.key)
-              if (!customer) {
-                return
-              }
-              setEditingCustomerId(customer.$id)
-              setEditTaxId(customer.taxId ?? '')
-              setEditAddress(customer.address ?? '')
-            }}
+            onClick={() => openEditCustomerModal(row.key)}
           />
           <Button
             type="text"
             danger
             icon={<i className="mgc_delete_2_line" style={{ fontSize: 18 }} />}
             onClick={() => {
-              message.info('Delete customer is not available yet')
+              setDeleteCustomerId(row.key)
+              setDeleteConfirmOpen(true)
             }}
           />
         </Space>
@@ -317,42 +365,77 @@ export function CustomersPage() {
     },
   ]
 
-  const handleCreateCustomer = async () => {
-    const companyName = newCustomerName.trim()
-    if (!companyName || !organization?.$id) {
+  const handleSubmitUpsert = async () => {
+    const companyName = upsertForm.companyName.trim()
+    if (!companyName) {
+      message.error('El nombre fiscal es obligatorio')
       return
     }
 
-    setIsCreatingCustomer(true)
-    const createdCustomer = await addCustomer(organization.$id, companyName)
-    setIsCreatingCustomer(false)
+    setIsSubmittingUpsert(true)
 
-    if (!createdCustomer) {
+    if (upsertMode === 'create') {
+      if (!organization?.$id) {
+        setIsSubmittingUpsert(false)
+        return
+      }
+
+      const createdCustomer = await addCustomer(organization.$id, companyName, {
+        taxId: upsertForm.taxId,
+        address: upsertForm.address,
+        email: upsertForm.email,
+        phone: upsertForm.phone,
+      })
+      setIsSubmittingUpsert(false)
+
+      if (!createdCustomer) {
+        return
+      }
+
+      message.success('Cliente creado')
+      setUpsertModalOpen(false)
+      setUpsertForm(emptyCustomerForm())
       return
     }
 
-    message.success('Customer created')
-    setCreateModalOpen(false)
-    setNewCustomerName('')
-  }
-
-  const handleSaveCustomer = async () => {
-    if (!editingCustomerId) {
+    if (!upsertCustomerId) {
+      setIsSubmittingUpsert(false)
       return
     }
 
-    setIsSavingEdit(true)
-    const updatedCustomer = await saveCustomerDetails(editingCustomerId, editTaxId.trim(), editAddress.trim())
-    setIsSavingEdit(false)
+    const updatedCustomer = await saveCustomerProfile(upsertCustomerId, {
+      companyName,
+      taxId: upsertForm.taxId,
+      address: upsertForm.address,
+      email: upsertForm.email,
+      phone: upsertForm.phone,
+    })
+    setIsSubmittingUpsert(false)
 
     if (!updatedCustomer) {
       return
     }
 
-    message.success('Customer updated')
-    setEditingCustomerId(null)
-    setEditTaxId('')
-    setEditAddress('')
+    message.success('Cliente actualizado')
+    setUpsertModalOpen(false)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteCustomerId) {
+      return
+    }
+
+    setIsDeletingCustomer(true)
+    const deleted = await removeCustomer(deleteCustomerId)
+    setIsDeletingCustomer(false)
+
+    if (!deleted) {
+      return
+    }
+
+    message.success('Cliente eliminado')
+    setDeleteConfirmOpen(false)
+    setDeleteCustomerId(null)
   }
 
   return (
@@ -394,7 +477,7 @@ export function CustomersPage() {
                   style={customersSearchStyle}
                   prefix={<i className="mgc_search_2_line" style={{ color: '#94a3b8' }} />}
                 />
-                <Button type="primary" onClick={() => setCreateModalOpen(true)}>
+                <Button type="primary" onClick={openCreateCustomerModal}>
                   Nuevo Cliente
                 </Button>
               </Space>
@@ -456,37 +539,136 @@ export function CustomersPage() {
         </Layout.Content>
       </Layout>
       <Modal
-        title="Nuevo Cliente"
-        open={createModalOpen}
-        onCancel={() => setCreateModalOpen(false)}
-        onOk={() => void handleCreateCustomer()}
-        okButtonProps={{ loading: isCreatingCustomer, disabled: !newCustomerName.trim() }}
+        open={upsertModalOpen}
+        width={920}
+        onCancel={() => setUpsertModalOpen(false)}
+        title={
+          <div>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              {upsertMode === 'create' ? 'Añadir Nuevo Cliente' : 'Actualizar Cliente'}
+            </Typography.Title>
+            <Typography.Text type="secondary" style={{ fontSize: 13 }}>
+              Introduce la información corporativa y de contacto del cliente.
+            </Typography.Text>
+          </div>
+        }
+        footer={
+          <Flex justify="end" gap={8}>
+            <Button onClick={() => setUpsertModalOpen(false)}>Cancelar</Button>
+            <Button type="primary" loading={isSubmittingUpsert} onClick={() => void handleSubmitUpsert()}>
+              {upsertMode === 'create' ? 'Guardar Cliente' : 'Actualizar Cliente'}
+            </Button>
+          </Flex>
+        }
       >
-        <Input
-          placeholder="Nombre de empresa"
-          value={newCustomerName}
-          onChange={(event) => setNewCustomerName(event.target.value)}
-        />
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            columnGap: 20,
+            rowGap: 16,
+            marginTop: 8,
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Flex align="center" gap={8}>
+              <i className="mgc_building_4_line" style={{ fontSize: 20, color: '#038c8c' }} />
+              <Typography.Text strong>Datos de Empresa</Typography.Text>
+            </Flex>
+            <div>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                Nombre Fiscal
+              </Typography.Text>
+              <Input
+                placeholder="Ej. Tech Solutions SL"
+                value={upsertForm.companyName}
+                onChange={(event) =>
+                  setUpsertForm((current) => ({ ...current, companyName: event.target.value }))
+                }
+              />
+            </div>
+            <div>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                NIF / CIF
+              </Typography.Text>
+              <Input
+                placeholder="B12345678"
+                value={upsertForm.taxId}
+                onChange={(event) => setUpsertForm((current) => ({ ...current, taxId: event.target.value }))}
+              />
+            </div>
+            <div>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                Dirección
+              </Typography.Text>
+              <Input.TextArea
+                rows={4}
+                placeholder="Calle Principal, 123"
+                value={upsertForm.address}
+                onChange={(event) => setUpsertForm((current) => ({ ...current, address: event.target.value }))}
+              />
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Flex align="center" gap={8}>
+              <i className="mgc_mail_open_line" style={{ fontSize: 20, color: '#038c8c' }} />
+              <Typography.Text strong>Datos de Contacto</Typography.Text>
+            </Flex>
+            <div>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                Email
+              </Typography.Text>
+              <Input
+                placeholder="carlos@empresa.com"
+                value={upsertForm.email}
+                onChange={(event) => setUpsertForm((current) => ({ ...current, email: event.target.value }))}
+              />
+            </div>
+            <div>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                Teléfono
+              </Typography.Text>
+              <Input
+                placeholder="+34 600 000 000"
+                value={upsertForm.phone}
+                onChange={(event) => setUpsertForm((current) => ({ ...current, phone: event.target.value }))}
+              />
+            </div>
+          </div>
+        </div>
       </Modal>
       <Modal
-        title="Editar Cliente"
-        open={Boolean(editingCustomerId)}
-        onCancel={() => setEditingCustomerId(null)}
-        onOk={() => void handleSaveCustomer()}
-        okButtonProps={{ loading: isSavingEdit }}
+        open={deleteConfirmOpen}
+        width={420}
+        centered
+        onCancel={() => {
+          setDeleteConfirmOpen(false)
+          setDeleteCustomerId(null)
+        }}
+        footer={
+          <Flex justify="end" gap={8}>
+            <Button
+              onClick={() => {
+                setDeleteConfirmOpen(false)
+                setDeleteCustomerId(null)
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button danger type="primary" loading={isDeletingCustomer} onClick={() => void handleConfirmDelete()}>
+              Eliminar
+            </Button>
+          </Flex>
+        }
       >
-        <Space direction="vertical" size={12} style={{ width: '100%' }}>
-          <Input
-            placeholder="ID Fiscal"
-            value={editTaxId}
-            onChange={(event) => setEditTaxId(event.target.value)}
-          />
-          <Input.TextArea
-            rows={4}
-            placeholder="Dirección"
-            value={editAddress}
-            onChange={(event) => setEditAddress(event.target.value)}
-          />
+        <Space direction="vertical" size={8}>
+          <Flex align="center" gap={8}>
+            <i className="mgc_alert_fill" style={{ fontSize: 18, color: '#dc2626' }} />
+            <Typography.Text strong>Confirmar eliminación</Typography.Text>
+          </Flex>
+          <Typography.Text type="secondary">
+            ¿Seguro que quieres eliminar a <Typography.Text strong>{selectedDeleteCustomerName || 'este cliente'}</Typography.Text>? Esta acción no se puede deshacer.
+          </Typography.Text>
         </Space>
       </Modal>
     </Layout>

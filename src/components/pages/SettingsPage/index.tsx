@@ -17,6 +17,7 @@ import {
 } from 'antd'
 import type { MenuProps } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { AppBrand } from '@/components/atoms/AppBrand'
 import {
   settingsBodyGridStyle,
   settingsCardsStackStyle,
@@ -236,18 +237,7 @@ export function SettingsPage() {
     <Layout style={settingsPageLayoutStyle}>
       <Layout.Sider theme="light" width={260} breakpoint="lg" collapsedWidth={0} style={settingsSiderStyle}>
         <Flex vertical style={{ height: '100%', padding: 16 }}>
-          <Flex align="center" gap={10} style={{ marginBottom: 16 }}>
-            <img
-              src="/billkerfy-mark.svg"
-              alt="Billkerfy brand mark"
-              width={32}
-              height={32}
-              style={{ borderRadius: 8, flexShrink: 0 }}
-            />
-            <Typography.Title level={4} style={{ margin: 0 }}>
-              Billkerfy
-            </Typography.Title>
-          </Flex>
+          <AppBrand />
           <Menu mode="inline" selectedKeys={['settings']} items={menuItems} onClick={handleMenuSelect} />
           <Card size="small" style={{ marginTop: 'auto' }}>
             <Flex align="center" gap={10}>

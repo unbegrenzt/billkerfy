@@ -1,6 +1,7 @@
 import { Breadcrumb, Card, Flex, Layout, Menu, Typography } from 'antd'
 import type { MenuProps } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
+import { AppBrand } from '@/components/atoms/AppBrand'
 import {
   companyBlockStyle,
   invoiceEditorBodyStyle,
@@ -69,18 +70,7 @@ export function InvoiceEditorTemplate({
     <Layout style={{ minHeight: '100vh' }}>
       <Layout.Sider theme="light" width={250} breakpoint="lg" collapsedWidth={0}>
         <Flex vertical style={{ height: '100%', padding: 16 }}>
-          <Flex align="center" gap={10} style={{ marginBottom: 16 }}>
-            <img
-              src="/billkerfy-mark.svg"
-              alt="Billkerfy brand mark"
-              width={32}
-              height={32}
-              style={{ borderRadius: 8, flexShrink: 0 }}
-            />
-            <Typography.Title level={4} style={{ margin: 0 }}>
-              Billkerfy
-            </Typography.Title>
-          </Flex>
+          <AppBrand />
           <Menu mode="inline" selectedKeys={['invoices']} items={menuItems} onClick={handleMenuSelect} />
         </Flex>
       </Layout.Sider>

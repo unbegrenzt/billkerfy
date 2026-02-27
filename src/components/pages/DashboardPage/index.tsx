@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Button, Card, Flex, Layout, Menu, Space, Typography } from 'antd'
 import type { MenuProps } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { AppBrand } from '@/components/atoms/AppBrand'
 import { DashboardActivityItem } from '@/components/molecules/DashboardActivityItem'
 import { DashboardRevenueChart } from '@/components/organisms/DashboardRevenueChart'
 import { DashboardStatCard } from '@/components/molecules/DashboardStatCard'
@@ -325,18 +326,7 @@ export function DashboardPage() {
       <Layout.Sider theme="light" width={260} breakpoint="lg" collapsedWidth={0} style={dashboardSiderStyle}>
         <Flex vertical justify="space-between" style={dashboardSiderBodyStyle}>
           <div>
-            <Flex align="center" gap={10} style={dashboardSiderBrandStyle}>
-              <img
-                src="/billkerfy-mark.svg"
-                alt="Billkerfy brand mark"
-                width={32}
-                height={32}
-                style={{ borderRadius: 8, flexShrink: 0 }}
-              />
-              <Typography.Title level={4} style={{ margin: 0 }}>
-                Billkerfy
-              </Typography.Title>
-            </Flex>
+            <AppBrand containerStyle={dashboardSiderBrandStyle} />
             <Menu mode="inline" selectedKeys={['dashboard']} items={menuItems} onClick={handleMenuSelect} />
           </div>
           <div style={dashboardProfileCardStyle}>

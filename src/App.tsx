@@ -3,6 +3,7 @@ import { CreateInvoicePage } from '@/components/pages/CreateInvoicePage'
 import { CustomersPage } from '@/components/pages/CustomersPage'
 import { DashboardPage } from '@/components/pages/DashboardPage'
 import { InvoicesListPage } from '@/components/pages/InvoicesListPage'
+import { SettingsPage } from '@/components/pages/SettingsPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Route path="/invoices" element={<InvoicesListPage />} />
       <Route path="/invoices/new" element={<CreateInvoicePage />} />
       <Route path="/customers" element={<CustomersPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
     </Routes>
   )
 }

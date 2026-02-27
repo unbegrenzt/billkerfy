@@ -188,6 +188,11 @@ export function CustomersPage() {
 
     if (key === 'customers') {
       navigate('/customers')
+      return
+    }
+
+    if (key === 'settings') {
+      navigate('/settings')
     }
   }
 

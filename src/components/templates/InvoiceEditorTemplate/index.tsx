@@ -57,6 +57,11 @@ export function InvoiceEditorTemplate({
 
     if (key === 'customers') {
       navigate('/customers')
+      return
+    }
+
+    if (key === 'settings') {
+      navigate('/settings')
     }
   }
 

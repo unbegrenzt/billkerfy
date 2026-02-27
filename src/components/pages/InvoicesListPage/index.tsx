@@ -127,6 +127,11 @@ export function InvoicesListPage() {
 
     if (key === 'customers') {
       navigate('/customers')
+      return
+    }
+
+    if (key === 'settings') {
+      navigate('/settings')
     }
   }
 

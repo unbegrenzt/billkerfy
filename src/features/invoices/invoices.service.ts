@@ -28,3 +28,19 @@ export async function fetchInvoicesByOrganization(organizationId: string): Promi
 
   return response.rows.map((row) => mapInvoiceRow(row as Record<string, unknown> & { $id: string }))
 }
+
+export async function updateInvoiceStatus(
+  invoiceId: string,
+  status: Invoice['status'],
+): Promise<Invoice> {
+  const response = await tablesDB.updateRow({
+    databaseId: DATABASE_ID,
+    tableId: INVOICES_TABLE_ID,
+    rowId: invoiceId,
+    data: {
+      status,
+    },
+  })
+
+  return mapInvoiceRow(response as Record<string, unknown> & { $id: string })
+}

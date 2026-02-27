@@ -6,6 +6,7 @@ import {
   Input,
   Layout,
   Menu,
+  Modal,
   Segmented,
   Select,
   Space,
@@ -28,17 +29,31 @@ import { useOrganizationsStore } from '@/features/organizations/organizations.st
 import { formatCurrencyAmount } from '@/lib/currency'
 
 const statusColorByValue: Record<string, string> = {
-  draft: 'default',
-  issued: 'processing',
-  paid: 'success',
-  void: 'error',
+  draft: '#64748b',
+  issued: '#d97706',
+  paid: '#059669',
+  void: '#6b7280',
 }
 
 const statusLabelByValue: Record<string, string> = {
-  draft: 'Draft',
-  issued: 'Issued',
-  paid: 'Paid',
-  void: 'Void',
+  draft: 'Borrador',
+  issued: 'Pendiente',
+  paid: 'Pagada',
+  void: 'Cancelada',
+}
+
+const statusDescriptionByValue: Record<string, string> = {
+  draft: 'Documento en preparación',
+  issued: 'A la espera de recibir el pago',
+  paid: 'Factura liquidada por el cliente',
+  void: 'Factura anulada permanentemente',
+}
+
+const statusIconByValue: Record<string, string> = {
+  draft: 'mgc_edit_3_line',
+  issued: 'mgc_time_line',
+  paid: 'mgc_check_circle_line',
+  void: 'mgc_close_circle_line',
 }
 
 const menuItems = [
@@ -85,13 +100,18 @@ export function InvoicesListPage() {
   const loadPrimaryOrganization = useOrganizationsStore((state) => state.loadPrimaryOrganization)
   const invoices = useInvoicesStore((state) => state.invoices)
   const invoicesLoading = useInvoicesStore((state) => state.isLoading)
+  const invoicesSavingStatus = useInvoicesStore((state) => state.isSavingStatus)
   const invoicesError = useInvoicesStore((state) => state.error)
   const loadInvoicesByOrganization = useInvoicesStore((state) => state.loadInvoicesByOrganization)
+  const saveInvoiceStatus = useInvoicesStore((state) => state.saveInvoiceStatus)
   const customers = useCustomersStore((state) => state.customers)
   const loadCustomersByOrganization = useCustomersStore((state) => state.loadCustomersByOrganization)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'paid' | 'pending' | 'overdue'>('all')
   const [dateFilter, setDateFilter] = useState<'30d' | '90d' | 'year' | 'all'>('30d')
+  const [statusModalOpen, setStatusModalOpen] = useState(false)
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
+  const [statusDraft, setStatusDraft] = useState<'draft' | 'issued' | 'paid' | 'void'>('draft')
 
   useEffect(() => {
     void loadPrimaryOrganization()
@@ -177,6 +197,11 @@ export function InvoicesListPage() {
     )
   }, [dateFilter, rows, search, statusFilter])
 
+  const selectedInvoice = useMemo(
+    () => rows.find((row) => row.key === selectedInvoiceId) ?? null,
+    [rows, selectedInvoiceId],
+  )
+
   const columns: ColumnsType<InvoiceTableRow> = [
     {
       title: 'Invoice Number',
@@ -205,7 +230,39 @@ export function InvoicesListPage() {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (value: string) => <Tag color={statusColorByValue[value]}>{statusLabelByValue[value] ?? value}</Tag>,
+      render: (value: string, row) => (
+        <span
+          onClick={() => {
+            setSelectedInvoiceId(row.key)
+            setStatusDraft(value as 'draft' | 'issued' | 'paid' | 'void')
+            setStatusModalOpen(true)
+          }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '4px 10px',
+            borderRadius: 8,
+            cursor: 'pointer',
+            border: `1px solid ${statusColorByValue[value]}33`,
+            background: `${statusColorByValue[value]}14`,
+            color: statusColorByValue[value],
+            fontWeight: 600,
+            fontSize: 12,
+          }}
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 999,
+              background: statusColorByValue[value],
+            }}
+          />
+          {statusLabelByValue[value] ?? value}
+          <i className="mgc_edit_3_line" style={{ fontSize: 14 }} />
+        </span>
+      ),
     },
     {
       title: 'Total',
@@ -303,6 +360,96 @@ export function InvoicesListPage() {
           </div>
         </Layout.Content>
       </Layout>
+      <Modal
+        title={<Typography.Title level={4} style={{ margin: 0 }}>Cambiar Estado</Typography.Title>}
+        open={statusModalOpen}
+        onCancel={() => setStatusModalOpen(false)}
+        footer={null}
+        width={430}
+        centered
+      >
+        <Space direction="vertical" size={14} style={{ width: '100%' }}>
+          <Typography.Text type="secondary">
+            Selecciona el nuevo estado para la factura{' '}
+            <Typography.Text strong>{selectedInvoice?.invoiceNumber ?? '-'}</Typography.Text>
+          </Typography.Text>
+          {(['paid', 'issued', 'draft', 'void'] as const).map((statusValue) => {
+            const isSelected = statusDraft === statusValue
+            return (
+              <div
+                key={statusValue}
+                onClick={() => setStatusDraft(statusValue)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: 12,
+                  borderRadius: 12,
+                  border: isSelected ? '2px solid #038c8c' : '1px solid #e2e8f0',
+                  background: isSelected ? 'rgba(3, 140, 140, 0.06)' : '#fff',
+                  cursor: 'pointer',
+                }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: statusColorByValue[statusValue],
+                    background: `${statusColorByValue[statusValue]}14`,
+                    flexShrink: 0,
+                  }}
+                >
+                  <i className={statusIconByValue[statusValue]} style={{ fontSize: 20 }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Typography.Text strong>{statusLabelByValue[statusValue]}</Typography.Text>
+                  <br />
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    {statusDescriptionByValue[statusValue]}
+                  </Typography.Text>
+                </div>
+                {isSelected ? (
+                  <div
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 999,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#038c8c',
+                      color: '#fff',
+                    }}
+                  >
+                    <i className="mgc_check_line" style={{ fontSize: 14 }} />
+                  </div>
+                ) : null}
+              </div>
+            )
+          })}
+          <Button
+            type="primary"
+            loading={invoicesSavingStatus}
+            onClick={async () => {
+              if (!selectedInvoiceId) {
+                return
+              }
+              await saveInvoiceStatus(selectedInvoiceId, statusDraft)
+              setStatusModalOpen(false)
+            }}
+            style={{ width: '100%', height: 44, fontWeight: 700 }}
+          >
+            Confirmar Cambio
+          </Button>
+          <Button onClick={() => setStatusModalOpen(false)} style={{ width: '100%', height: 42 }}>
+            Cancelar
+          </Button>
+        </Space>
+      </Modal>
     </Layout>
   )
 }

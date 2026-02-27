@@ -16,3 +16,19 @@ export type BillingSettingsForm = {
   dueDays: string
   legalTerms: string
 }
+
+export type LocalizationSettingsForm = {
+  language: string
+  timezone: string
+  dateFormat: string
+}
+
+export type NotificationSettingsForm = {
+  weeklySummary: boolean
+  overdueAlerts: boolean
+  productNews: boolean
+}
+
+export type ExportSettingsForm = {
+  format: 'pdf' | 'excel'
+}

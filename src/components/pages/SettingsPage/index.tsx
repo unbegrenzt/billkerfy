@@ -1,5 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Avatar, Button, Card, Flex, Grid, Input, Layout, Menu, Select, Space, Typography, message } from 'antd'
+import {
+  Avatar,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Input,
+  Layout,
+  Menu,
+  Radio,
+  Select,
+  Space,
+  Switch,
+  Typography,
+  message,
+} from 'antd'
 import type { MenuProps } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -17,6 +32,9 @@ import {
 import type {
   BillingSettingsForm,
   CompanySettingsForm,
+  ExportSettingsForm,
+  LocalizationSettingsForm,
+  NotificationSettingsForm,
   SettingsSectionKey,
 } from '@/components/pages/SettingsPage/SettingsPage.types'
 import { useOrganizationsStore } from '@/features/organizations/organizations.store'
@@ -54,6 +72,22 @@ const defaultBillingForm: BillingSettingsForm = {
     'El pago debe realizarse dentro de los 30 dias posteriores a la emision de la factura.',
 }
 
+const defaultLocalizationForm: LocalizationSettingsForm = {
+  language: 'es-ES',
+  timezone: 'Europe/Madrid',
+  dateFormat: 'DD/MM/YYYY',
+}
+
+const defaultNotificationsForm: NotificationSettingsForm = {
+  weeklySummary: true,
+  overdueAlerts: true,
+  productNews: false,
+}
+
+const defaultExportForm: ExportSettingsForm = {
+  format: 'pdf',
+}
+
 export function SettingsPage() {
   const screens = Grid.useBreakpoint()
   const navigate = useNavigate()
@@ -73,6 +107,9 @@ export function SettingsPage() {
     phone: '',
   })
   const [billingForm, setBillingForm] = useState<BillingSettingsForm>(defaultBillingForm)
+  const [localizationForm, setLocalizationForm] = useState<LocalizationSettingsForm>(defaultLocalizationForm)
+  const [notificationsForm, setNotificationsForm] = useState<NotificationSettingsForm>(defaultNotificationsForm)
+  const [exportForm, setExportForm] = useState<ExportSettingsForm>(defaultExportForm)
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
 
@@ -159,6 +196,13 @@ export function SettingsPage() {
     message.warning('La persistencia de configuracion aun no esta conectada al backend')
   }
 
+  const headerDescription =
+    activeSection === 'billing'
+      ? 'Administra tus preferencias personales y de la interfaz.'
+      : 'Administra los detalles de tu empresa y preferencias de la cuenta.'
+
+  const saveButtonLabel = activeSection === 'billing' ? 'Guardar Preferencias' : 'Guardar Cambios'
+
   return (
     <Layout style={settingsPageLayoutStyle}>
       <Layout.Sider theme="light" width={260} breakpoint="lg" collapsedWidth={0} style={settingsSiderStyle}>
@@ -197,12 +241,10 @@ export function SettingsPage() {
                 <Typography.Title level={2} style={{ margin: 0 }}>
                   Configuracion
                 </Typography.Title>
-                <Typography.Text type="secondary">
-                  Administra los detalles de tu empresa y preferencias de la cuenta.
-                </Typography.Text>
+                <Typography.Text type="secondary">{headerDescription}</Typography.Text>
               </div>
               <Button type="primary" icon={<i className="mgc_save_2_line" />} onClick={handleSave}>
-                Guardar Cambios
+                {saveButtonLabel}
               </Button>
             </Flex>
             <div style={{ marginTop: 24 }}>
@@ -234,7 +276,7 @@ export function SettingsPage() {
                   </Button>
                 </div>
                 <div style={settingsCardsStackStyle}>
-                  {(activeSection === 'company' || activeSection === 'billing' || activeSection === 'account') && (
+                  {activeSection === 'company' && (
                     <Card
                       title="Perfil de Empresa"
                       extra={<Typography.Text type="secondary">Informacion visible en tus facturas</Typography.Text>}
@@ -306,7 +348,7 @@ export function SettingsPage() {
                       </div>
                     </Card>
                   )}
-                  {(activeSection === 'billing' || activeSection === 'account') && (
+                  {activeSection === 'billing' && (
                     <Card
                       title="Preferencias de Facturacion"
                       extra={<Typography.Text type="secondary">Valores por defecto</Typography.Text>}
@@ -375,6 +417,159 @@ export function SettingsPage() {
                           />
                         </div>
                       </div>
+                    </Card>
+                  )}
+                  {activeSection === 'billing' && (
+                    <Card
+                      title="Localizacion e Idioma"
+                      extra={<Typography.Text type="secondary">Visualizacion del panel</Typography.Text>}
+                    >
+                      <div style={formGridStyle}>
+                        <div>
+                          <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
+                            Idioma de la Interfaz
+                          </Typography.Text>
+                          <Select
+                            style={{ width: '100%' }}
+                            value={localizationForm.language}
+                            options={[
+                              { value: 'es-ES', label: 'Espanol (Espana)' },
+                              { value: 'en-GB', label: 'English (UK)' },
+                              { value: 'en-US', label: 'English (US)' },
+                              { value: 'fr-FR', label: 'Francais' },
+                              { value: 'de-DE', label: 'Deutsch' },
+                            ]}
+                            onChange={(value) =>
+                              setLocalizationForm((current) => ({ ...current, language: value }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
+                            Zona Horaria
+                          </Typography.Text>
+                          <Select
+                            style={{ width: '100%' }}
+                            value={localizationForm.timezone}
+                            options={[
+                              { value: 'Europe/Madrid', label: '(GMT+01:00) Madrid, Paris, Roma' },
+                              { value: 'Europe/London', label: '(GMT+00:00) Londres, Lisboa, Casablanca' },
+                              { value: 'America/New_York', label: '(GMT-05:00) Eastern Time (US & Canada)' },
+                              { value: 'Asia/Tokyo', label: '(GMT+09:00) Tokyo, Seoul' },
+                            ]}
+                            onChange={(value) =>
+                              setLocalizationForm((current) => ({ ...current, timezone: value }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
+                            Formato de Fecha
+                          </Typography.Text>
+                          <Select
+                            style={{ width: '100%' }}
+                            value={localizationForm.dateFormat}
+                            options={[
+                              { value: 'DD/MM/YYYY', label: 'DD/MM/AAAA (31/12/2024)' },
+                              { value: 'YYYY-MM-DD', label: 'AAAA-MM-DD (2024-12-31)' },
+                              { value: 'MM/DD/YYYY', label: 'MM/DD/AAAA (12/31/2024)' },
+                            ]}
+                            onChange={(value) =>
+                              setLocalizationForm((current) => ({ ...current, dateFormat: value }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+                  {activeSection === 'billing' && (
+                    <Card
+                      title="Notificaciones por Correo"
+                      extra={<Typography.Text type="secondary">Comunicaciones por email</Typography.Text>}
+                    >
+                      <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                        <Flex justify="space-between" align="center" gap={16}>
+                          <div>
+                            <Typography.Text strong>Resumen semanal de facturacion</Typography.Text>
+                            <Typography.Text type="secondary" style={{ display: 'block' }}>
+                              Recibe un reporte cada lunes con el estado de tus cobros.
+                            </Typography.Text>
+                          </div>
+                          <Switch
+                            checked={notificationsForm.weeklySummary}
+                            onChange={(checked) =>
+                              setNotificationsForm((current) => ({ ...current, weeklySummary: checked }))
+                            }
+                          />
+                        </Flex>
+                        <Flex justify="space-between" align="center" gap={16}>
+                          <div>
+                            <Typography.Text strong>Avisos de facturas vencidas</Typography.Text>
+                            <Typography.Text type="secondary" style={{ display: 'block' }}>
+                              Te avisaremos cuando un cliente supere la fecha de vencimiento.
+                            </Typography.Text>
+                          </div>
+                          <Switch
+                            checked={notificationsForm.overdueAlerts}
+                            onChange={(checked) =>
+                              setNotificationsForm((current) => ({ ...current, overdueAlerts: checked }))
+                            }
+                          />
+                        </Flex>
+                        <Flex justify="space-between" align="center" gap={16}>
+                          <div>
+                            <Typography.Text strong>Novedades de Billkerfy</Typography.Text>
+                            <Typography.Text type="secondary" style={{ display: 'block' }}>
+                              Nuevas funcionalidades y actualizaciones de la plataforma.
+                            </Typography.Text>
+                          </div>
+                          <Switch
+                            checked={notificationsForm.productNews}
+                            onChange={(checked) =>
+                              setNotificationsForm((current) => ({ ...current, productNews: checked }))
+                            }
+                          />
+                        </Flex>
+                      </Space>
+                    </Card>
+                  )}
+                  {activeSection === 'billing' && (
+                    <Card
+                      title="Opciones de Exportacion"
+                      extra={<Typography.Text type="secondary">Formato de descarga predeterminado</Typography.Text>}
+                    >
+                      <Radio.Group
+                        value={exportForm.format}
+                        onChange={(event) =>
+                          setExportForm((current) => ({ ...current, format: event.target.value as 'pdf' | 'excel' }))
+                        }
+                        style={{ width: '100%' }}
+                      >
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: screens.sm ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+                            gap: 12,
+                          }}
+                        >
+                          <Card size="small">
+                            <Radio value="pdf">
+                              <Space size={10}>
+                                <i className="mgc_file_pdf_line" style={{ fontSize: 18 }} />
+                                <span>PDF Document</span>
+                              </Space>
+                            </Radio>
+                          </Card>
+                          <Card size="small">
+                            <Radio value="excel">
+                              <Space size={10}>
+                                <i className="mgc_table_2_line" style={{ fontSize: 18 }} />
+                                <span>Excel / CSV</span>
+                              </Space>
+                            </Radio>
+                          </Card>
+                        </div>
+                      </Radio.Group>
                     </Card>
                   )}
                   {activeSection === 'account' && (

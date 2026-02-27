@@ -30,6 +30,8 @@ import {
   settingsSiderStyle,
 } from '@/components/pages/SettingsPage/SettingsPage.styles'
 import type {
+  AccountProfileForm,
+  AccountSecurityForm,
   BillingSettingsForm,
   CompanySettingsForm,
   ExportSettingsForm,
@@ -97,7 +99,6 @@ export function SettingsPage() {
   const loadPrimaryOrganization = useOrganizationsStore((state) => state.loadPrimaryOrganization)
 
   const [activeSection, setActiveSection] = useState<SettingsSectionKey>('company')
-  const [accountEmail, setAccountEmail] = useState('alex.morgan@empresa.com')
   const [companyForm, setCompanyForm] = useState<CompanySettingsForm>({
     legalName: '',
     taxId: '',
@@ -110,8 +111,16 @@ export function SettingsPage() {
   const [localizationForm, setLocalizationForm] = useState<LocalizationSettingsForm>(defaultLocalizationForm)
   const [notificationsForm, setNotificationsForm] = useState<NotificationSettingsForm>(defaultNotificationsForm)
   const [exportForm, setExportForm] = useState<ExportSettingsForm>(defaultExportForm)
-  const [password, setPassword] = useState('')
-  const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [accountProfileForm, setAccountProfileForm] = useState<AccountProfileForm>({
+    firstName: 'Alex',
+    lastName: 'Morgan',
+    email: 'alex.morgan@empresa.com',
+  })
+  const [accountSecurityForm, setAccountSecurityForm] = useState<AccountSecurityForm>({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
 
   useEffect(() => {
     void loadPrimaryOrganization()
@@ -121,9 +130,15 @@ export function SettingsPage() {
     void account
       .get()
       .then((response) => {
-        if (response.email) {
-          setAccountEmail(response.email)
-        }
+        const fullName = (response.name ?? '').trim()
+        const [firstName = 'Alex', ...rest] = fullName.split(/\s+/).filter(Boolean)
+        const lastName = rest.join(' ') || 'Morgan'
+        setAccountProfileForm((current) => ({
+          ...current,
+          firstName,
+          lastName,
+          email: response.email ?? current.email,
+        }))
       })
       .catch(() => {})
   }, [])
@@ -189,8 +204,15 @@ export function SettingsPage() {
   }
 
   const handleSave = () => {
-    if (password && password !== passwordConfirm) {
+    if (
+      accountSecurityForm.newPassword &&
+      accountSecurityForm.newPassword !== accountSecurityForm.confirmPassword
+    ) {
       message.error('Las contrasenas no coinciden')
+      return
+    }
+    if (accountSecurityForm.newPassword && !accountSecurityForm.currentPassword) {
+      message.error('Introduce tu contrasena actual para actualizar la cuenta')
       return
     }
     message.warning('La persistencia de configuracion aun no esta conectada al backend')
@@ -199,9 +221,16 @@ export function SettingsPage() {
   const headerDescription =
     activeSection === 'billing'
       ? 'Administra tus preferencias personales y de la interfaz.'
+      : activeSection === 'account'
+        ? 'Gestiona la informacion de tu cuenta y seguridad.'
       : 'Administra los detalles de tu empresa y preferencias de la cuenta.'
 
-  const saveButtonLabel = activeSection === 'billing' ? 'Guardar Preferencias' : 'Guardar Cambios'
+  const saveButtonLabel =
+    activeSection === 'billing'
+      ? 'Guardar Preferencias'
+      : activeSection === 'account'
+        ? 'Guardar Cambios de Cuenta'
+        : 'Guardar Cambios'
 
   return (
     <Layout style={settingsPageLayoutStyle}>
@@ -573,35 +602,144 @@ export function SettingsPage() {
                     </Card>
                   )}
                   {activeSection === 'account' && (
-                    <Card title="Cuenta" extra={<Typography.Text type="secondary">Credenciales de acceso</Typography.Text>}>
+                    <Card
+                      title="Informacion Personal"
+                      extra={<Typography.Text type="secondary">Datos basicos de tu perfil</Typography.Text>}
+                    >
                       <div style={formGridStyle}>
+                        <div>
+                          <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
+                            Nombre
+                          </Typography.Text>
+                          <Input
+                            value={accountProfileForm.firstName}
+                            onChange={(event) =>
+                              setAccountProfileForm((current) => ({ ...current, firstName: event.target.value }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
+                            Apellidos
+                          </Typography.Text>
+                          <Input
+                            value={accountProfileForm.lastName}
+                            onChange={(event) =>
+                              setAccountProfileForm((current) => ({ ...current, lastName: event.target.value }))
+                            }
+                          />
+                        </div>
                         <div style={settingsFullColumnStyle}>
                           <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
                             Correo Electronico
                           </Typography.Text>
-                          <Input disabled value={accountEmail} />
+                          <Input disabled suffix={<i className="mgc_lock_line" />} value={accountProfileForm.email} />
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+                  {activeSection === 'account' && (
+                    <Card title="Seguridad" extra={<Typography.Text type="secondary">Actualiza tu contrasena</Typography.Text>}>
+                      <div style={formGridStyle}>
+                        <div>
+                          <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
+                            Contrasena Actual
+                          </Typography.Text>
+                          <Input.Password
+                            value={accountSecurityForm.currentPassword}
+                            onChange={(event) =>
+                              setAccountSecurityForm((current) => ({
+                                ...current,
+                                currentPassword: event.target.value,
+                              }))
+                            }
+                            placeholder="••••••••"
+                          />
                         </div>
                         <div>
                           <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
                             Nueva Contrasena
                           </Typography.Text>
                           <Input.Password
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            placeholder="••••••••"
+                            value={accountSecurityForm.newPassword}
+                            onChange={(event) =>
+                              setAccountSecurityForm((current) => ({ ...current, newPassword: event.target.value }))
+                            }
+                            placeholder="Minimo 8 caracteres"
                           />
                         </div>
                         <div>
                           <Typography.Text style={{ display: 'block', marginBottom: 8 }}>
-                            Confirmar Contrasena
+                            Confirmar Nueva Contrasena
                           </Typography.Text>
                           <Input.Password
-                            value={passwordConfirm}
-                            onChange={(event) => setPasswordConfirm(event.target.value)}
+                            value={accountSecurityForm.confirmPassword}
+                            onChange={(event) =>
+                              setAccountSecurityForm((current) => ({
+                                ...current,
+                                confirmPassword: event.target.value,
+                              }))
+                            }
                             placeholder="••••••••"
                           />
                         </div>
                       </div>
+                    </Card>
+                  )}
+                  {activeSection === 'account' && (
+                    <Card
+                      title="Plan y Suscripcion"
+                      extra={<Typography.Text type="secondary">Detalles de facturacion</Typography.Text>}
+                    >
+                      <Flex
+                        justify="space-between"
+                        align={screens.sm ? 'center' : 'flex-start'}
+                        gap={16}
+                        wrap
+                        style={{
+                          padding: 16,
+                          border: '1px solid #99f6e4',
+                          borderRadius: 12,
+                          background: '#f0fdfa',
+                        }}
+                      >
+                        <Flex align="center" gap={12}>
+                          <div
+                            style={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: 999,
+                              display: 'grid',
+                              placeItems: 'center',
+                              color: '#134e4a',
+                              background: '#99f6e4',
+                            }}
+                          >
+                            <i className="mgc_wallet_4_line" style={{ fontSize: 20 }} />
+                          </div>
+                          <div>
+                            <Typography.Text type="secondary" style={{ display: 'block' }}>
+                              Tu Plan Actual
+                            </Typography.Text>
+                            <Typography.Title level={4} style={{ margin: 0 }}>
+                              Plan Profesional
+                            </Typography.Title>
+                          </div>
+                        </Flex>
+                        <Button icon={<i className="mgc_wallet_4_line" />} style={{ borderColor: '#14b8a6', color: '#0f766e' }}>
+                          Gestionar Suscripcion
+                        </Button>
+                      </Flex>
+                      <Space direction="vertical" size={10} style={{ marginTop: 16 }}>
+                        <Typography.Text>
+                          <i className="mgc_check_circle_fill" style={{ color: '#16a34a', marginRight: 8 }} />
+                          Siguiente cobro: 15 de Octubre, 2024
+                        </Typography.Text>
+                        <Typography.Text>
+                          <i className="mgc_check_circle_fill" style={{ color: '#16a34a', marginRight: 8 }} />
+                          Metodo de pago: Tarjeta de Credito (•••• 4242)
+                        </Typography.Text>
+                      </Space>
                     </Card>
                   )}
                 </div>

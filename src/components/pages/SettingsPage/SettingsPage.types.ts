@@ -32,3 +32,15 @@ export type NotificationSettingsForm = {
 export type ExportSettingsForm = {
   format: 'pdf' | 'excel'
 }
+
+export type AccountProfileForm = {
+  firstName: string
+  lastName: string
+  email: string
+}
+
+export type AccountSecurityForm = {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}

@@ -8,7 +8,6 @@ import {
   Menu,
   Modal,
   Space,
-  Statistic,
   Table,
   Typography,
   message,
@@ -401,22 +400,6 @@ export function CustomersPage() {
               </Space>
             </div>
 
-            <div style={customersStatsGridStyle}>
-              <Card size="small">
-                <Statistic title="Nuevos (Mes)" value={newCustomersThisMonth} />
-              </Card>
-              <Card size="small">
-                <Statistic
-                  title="Facturación Media"
-                  value={averageBilling}
-                  formatter={(value) => formatCurrencyAmount(Number(value), currencyCode)}
-                />
-              </Card>
-              <Card size="small">
-                <Statistic title="Clientes Activos" value={activeCustomers} />
-              </Card>
-            </div>
-
             {organizationLoading || customersLoading || invoicesLoading ? (
               <Typography.Text type="secondary">Loading customers data...</Typography.Text>
             ) : null}
@@ -433,6 +416,42 @@ export function CustomersPage() {
                 locale={{ emptyText: 'No customers found yet.' }}
               />
             </Card>
+
+            <div style={customersStatsGridStyle}>
+              <Card size="small">
+                <Flex justify="space-between" align="center" style={{ marginBottom: 8 }}>
+                  <Typography.Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase' }}>
+                    Nuevos (Mes)
+                  </Typography.Text>
+                  <i className="mgc_user_add_2_line" style={{ fontSize: 20, color: '#038c8c' }} />
+                </Flex>
+                <Typography.Title level={3} style={{ margin: 0 }}>
+                  {newCustomersThisMonth}
+                </Typography.Title>
+              </Card>
+              <Card size="small">
+                <Flex justify="space-between" align="center" style={{ marginBottom: 8 }}>
+                  <Typography.Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase' }}>
+                    Facturación Media
+                  </Typography.Text>
+                  <i className="mgc_wallet_4_line" style={{ fontSize: 20, color: '#038c8c' }} />
+                </Flex>
+                <Typography.Title level={3} style={{ margin: 0 }}>
+                  {formatCurrencyAmount(averageBilling, currencyCode)}
+                </Typography.Title>
+              </Card>
+              <Card size="small">
+                <Flex justify="space-between" align="center" style={{ marginBottom: 8 }}>
+                  <Typography.Text type="secondary" style={{ fontSize: 12, textTransform: 'uppercase' }}>
+                    Clientes Activos
+                  </Typography.Text>
+                  <i className="mgc_group_2_line" style={{ fontSize: 20, color: '#94a3b8' }} />
+                </Flex>
+                <Typography.Title level={3} style={{ margin: 0 }}>
+                  {activeCustomers}
+                </Typography.Title>
+              </Card>
+            </div>
           </div>
         </Layout.Content>
       </Layout>
@@ -473,4 +492,3 @@ export function CustomersPage() {
     </Layout>
   )
 }
-

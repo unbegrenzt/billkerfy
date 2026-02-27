@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html class="" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión Clientes Billkerfy</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#038C8C",
+          "background-light": "#f5f8f8",
+          "background-dark": "#0f2323",
+          "ink-dark": "#1a1a1a",
+          "ink-gray": "#6b7280",
+          "ink-light": "#f3f4f6",
+        },
+        fontFamily: {
+          "display": ["Public Sans", "sans-serif"]
+        },
+        borderRadius: {
+            DEFAULT: "0.25rem", 
+            lg: "0.5rem", 
+            xl: "0.75rem", 
+            full: "9999px"
+        },
+      },
+    },
+  }
+</script>
+<style type="text/tailwindcss">
+    @layer utilities {
+        .btn-minimal {
+            @apply px-5 py-2.5 rounded text-sm font-semibold transition-all duration-200 ease-in-out;
+        }
+        .table-row-hover {
+            @apply hover:bg-background-light/50 transition-colors duration-200;
+        }
+    }
+</style>
+</head>
+<body class="bg-white text-ink-dark font-display antialiased selection:bg-primary/20 selection:text-primary">
+<div class="flex min-h-screen w-full flex-row overflow-hidden bg-background-light">
+<aside class="hidden w-20 flex-col border-r border-gray-100 bg-white lg:flex sticky top-0 h-screen items-center py-6 z-20">
+<div class="mb-8 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white shadow-sm" title="Billkerfy">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+</div>
+<nav class="flex flex-1 flex-col gap-6 w-full items-center">
+<a class="group relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-primary transition-colors" href="#" title="Dashboard">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">dashboard</span>
+</a>
+<a class="group relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-primary transition-colors" href="#" title="Facturas">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">receipt_long</span>
+</a>
+<a class="group relative flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors" href="#" title="Clientes">
+<span class="material-symbols-outlined fill-1 text-xl">group</span>
+</a>
+<a class="group relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-primary transition-colors" href="#" title="Configuración">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col items-center gap-4">
+<div class="h-8 w-8 rounded-full bg-gray-200 bg-cover bg-center cursor-pointer ring-2 ring-white shadow-sm" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2KFd2QC81m1Q-7S7MzCoShKjjkKR4dOiiNDHhPm1xR9L1DZt1w7WBuvbjGMaTUqo1MrUYBCvlzdUdowCA4ZBYZ4Fc1263O9wnwfl6V7WMYzEM6yBCs7oQPinoCHNaKVBYLzYdcNJsiR5mG0f84WxO7zrqGPPgSmp77GGanLxwiNiAXX4MpMecScPSmcwCJaqzmUNRAlnmk46TGqHU8m8yxyqtQxbIvSdHVoQuFRRnmbr_NojYJAZ8iupV_30zjiYolPyHHIZWJ-g');"></div>
+<button class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Cerrar Sesión">
+<span class="material-symbols-outlined text-xl">logout</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-background-light relative">
+<header class="flex lg:hidden items-center justify-between border-b border-gray-100 bg-white px-4 py-3 sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<div class="flex h-8 w-8 items-center justify-center rounded bg-primary text-white">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<span class="font-bold text-ink-dark">Billkerfy</span>
+</div>
+<button class="text-gray-500">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<div class="flex-1 px-6 py-8 lg:px-12 lg:py-10 max-w-7xl mx-auto w-full">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<h2 class="text-3xl font-bold text-ink-dark tracking-tight mb-2">Gestión de Clientes</h2>
+<p class="text-ink-gray font-medium">Administra tu cartera y relaciones comerciales en Billkerfy.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+<div class="relative group w-full sm:w-64">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<span class="material-symbols-outlined text-gray-400 text-[20px]">search</span>
+</div>
+<input class="block w-full rounded border-0 bg-white py-2.5 pl-10 pr-4 text-sm text-ink-dark ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary shadow-sm transition-all" placeholder="Buscar por nombre, ID..." type="text"/>
+</div>
+<button class="btn-minimal bg-primary text-white hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 flex items-center justify-center gap-2 whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Nuevo Cliente
+                </button>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden mb-8">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-white border-b border-gray-100">
+<tr>
+<th class="px-6 py-5 text-xs font-semibold text-gray-400 uppercase tracking-wider w-1/3">Cliente</th>
+<th class="px-6 py-5 text-xs font-semibold text-gray-400 uppercase tracking-wider">ID Fiscal</th>
+<th class="px-6 py-5 text-xs font-semibold text-gray-400 uppercase tracking-wider">Contacto</th>
+<th class="px-6 py-5 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Facturado</th>
+<th class="px-6 py-5 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right w-24"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50 text-sm">
+<tr class="group hover:bg-gray-50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-sm ring-2 ring-white">
+                                        TS
+                                    </div>
+<div class="flex flex-col">
+<span class="font-bold text-ink-dark text-[15px]">Tech Solutions SL</span>
+<span class="text-xs text-gray-400 mt-0.5">Cliente desde Ene '23</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-mono text-gray-500 bg-gray-50 px-2 py-1 rounded text-xs">B-12345678</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-ink-dark">Carlos Méndez</span>
+<a class="text-xs text-gray-500 hover:text-primary truncate transition-colors" href="mailto:carlos@techsol.com">carlos@techsol.com</a>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="font-bold text-ink-dark text-[15px]">€12,450.00</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-gray-50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm ring-2 ring-white">
+                                        CP
+                                    </div>
+<div class="flex flex-col">
+<span class="font-bold text-ink-dark text-[15px]">Consultoría Pérez</span>
+<span class="text-xs text-gray-400 mt-0.5">Cliente desde Feb '23</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-mono text-gray-500 bg-gray-50 px-2 py-1 rounded text-xs">B-87654321</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-ink-dark">Ana Pérez</span>
+<a class="text-xs text-gray-500 hover:text-primary truncate transition-colors" href="mailto:ana@consultaperez.es">ana@consultaperez.es</a>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="font-bold text-ink-dark text-[15px]">€5,230.50</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-gray-50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm ring-2 ring-white">
+                                        DC
+                                    </div>
+<div class="flex flex-col">
+<span class="font-bold text-ink-dark text-[15px]">Diseños Creativos</span>
+<span class="text-xs text-gray-400 mt-0.5">Cliente desde Mar '23</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-mono text-gray-500 bg-gray-50 px-2 py-1 rounded text-xs">B-11223344</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-ink-dark">Laura Gómez</span>
+<a class="text-xs text-gray-500 hover:text-primary truncate transition-colors" href="mailto:laura@design.io">laura@design.io</a>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="font-bold text-ink-dark text-[15px]">€8,900.00</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-gray-50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm ring-2 ring-white">
+                                        GI
+                                    </div>
+<div class="flex flex-col">
+<span class="font-bold text-ink-dark text-[15px]">Global Imports</span>
+<span class="text-xs text-gray-400 mt-0.5">Cliente desde Abr '23</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-mono text-gray-500 bg-gray-50 px-2 py-1 rounded text-xs">A-55667788</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-ink-dark">Pedro Martínez</span>
+<a class="text-xs text-gray-500 hover:text-primary truncate transition-colors" href="mailto:pedro@globalimports.com">pedro@globalimports.com</a>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="font-bold text-ink-dark text-[15px]">€15,600.25</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-gray-50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm ring-2 ring-white">
+                                        SO
+                                    </div>
+<div class="flex flex-col">
+<span class="font-bold text-ink-dark text-[15px]">Startup One</span>
+<span class="text-xs text-gray-400 mt-0.5">Cliente desde Jun '23</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-mono text-gray-500 bg-gray-50 px-2 py-1 rounded text-xs">B-99887766</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-ink-dark">Sofia Rodriguez</span>
+<a class="text-xs text-gray-500 hover:text-primary truncate transition-colors" href="mailto:sofia@startupone.io">sofia@startupone.io</a>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="font-bold text-ink-dark text-[15px]">€2,100.00</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex items-center justify-between px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+<span class="text-xs font-medium text-gray-500">Mostrando <span class="text-ink-dark">1-5</span> de 12</span>
+<div class="flex gap-2">
+<button class="p-1 text-gray-400 hover:text-ink-dark disabled:opacity-30 disabled:hover:text-gray-400">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="p-1 text-gray-400 hover:text-ink-dark">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="rounded-xl bg-white border border-gray-100 p-6 flex flex-col gap-1 transition-all hover:border-gray-200">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Nuevos (Mes)</p>
+<span class="material-symbols-outlined text-primary text-[24px]">group_add</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-ink-dark">3</p>
+<span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+12%</span>
+</div>
+</div>
+<div class="rounded-xl bg-white border border-gray-100 p-6 flex flex-col gap-1 transition-all hover:border-gray-200">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Facturación Media</p>
+<span class="material-symbols-outlined text-primary text-[24px]">payments</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-ink-dark">€4,250</p>
+<span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+5.4%</span>
+</div>
+</div>
+<div class="rounded-xl bg-white border border-gray-100 p-6 flex flex-col gap-1 transition-all hover:border-gray-200">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Clientes Activos</p>
+<span class="material-symbols-outlined text-gray-400 text-[24px]">diversity_3</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-ink-dark">12</p>
+<span class="text-xs font-medium text-gray-400">Total</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

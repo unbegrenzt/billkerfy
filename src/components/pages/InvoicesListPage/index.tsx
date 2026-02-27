@@ -122,6 +122,11 @@ export function InvoicesListPage() {
 
     if (key === 'invoices') {
       navigate('/invoices')
+      return
+    }
+
+    if (key === 'customers') {
+      navigate('/customers')
     }
   }
 

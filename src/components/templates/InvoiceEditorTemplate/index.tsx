@@ -1,4 +1,5 @@
 import { Breadcrumb, Card, Flex, Layout, Menu, Typography } from 'antd'
+import { Link } from 'react-router-dom'
 import {
   companyBlockStyle,
   invoiceEditorBodyStyle,
@@ -64,7 +65,12 @@ export function InvoiceEditorTemplate({
         <Layout.Content>
           <div style={invoiceEditorBodyStyle}>
             <div>
-              <Breadcrumb items={[{ title: 'Invoices' }, { title: 'Create Invoice' }]} />
+              <Breadcrumb
+                items={[
+                  { title: <Link to="/invoices">Invoices</Link> },
+                  { title: 'Create Invoice' },
+                ]}
+              />
               <Typography.Title level={2} style={{ marginTop: 12 }}>
                 {pageTitle}
               </Typography.Title>

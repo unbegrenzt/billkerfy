@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Breadcrumb,
   Button,
   Card,
   Flex,
@@ -239,9 +238,6 @@ export function InvoicesListPage() {
       <Layout>
         <Layout.Content>
           <div style={invoicesPageBodyStyle}>
-            <div>
-              <Breadcrumb items={[{ title: 'Invoices' }, { title: 'Listado' }]} />
-            </div>
             <div style={invoicesToolbarStyle}>
               <div>
                 <Typography.Title level={2} style={{ margin: 0 }}>

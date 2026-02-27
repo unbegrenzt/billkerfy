@@ -12,3 +12,9 @@ export type CreateCustomerInput = {
   organizationId: string
   companyName: string
 }
+
+export type UpdateCustomerInput = {
+  customerId: string
+  taxId: string
+  address: string
+}

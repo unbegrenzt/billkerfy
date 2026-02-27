@@ -1,6 +1,6 @@
 import { ID, Query } from 'appwrite'
 import { tablesDB } from '@/lib/appwrite'
-import type { CreateCustomerInput, Customer } from '@/features/customers/customers.types'
+import type { CreateCustomerInput, Customer, UpdateCustomerInput } from '@/features/customers/customers.types'
 
 const DATABASE_ID = 'billkerfy'
 const CUSTOMERS_TABLE_ID = 'customers'
@@ -38,6 +38,20 @@ export async function createCustomer(input: CreateCustomerInput): Promise<Custom
       companyName: input.companyName,
       taxId: `AUTO-${code}`,
       address: 'Pending address',
+    },
+  })
+
+  return mapCustomerRow(response as unknown as Record<string, unknown> & { $id: string })
+}
+
+export async function updateCustomer(input: UpdateCustomerInput): Promise<Customer> {
+  const response = await tablesDB.updateRow({
+    databaseId: DATABASE_ID,
+    tableId: CUSTOMERS_TABLE_ID,
+    rowId: input.customerId,
+    data: {
+      taxId: input.taxId,
+      address: input.address,
     },
   })
 

@@ -24,8 +24,8 @@ function mapCustomerData(customer: Customer): CustomerData {
   return {
     id: customer.$id,
     companyName: customer.companyName,
-    taxId: customer.taxId ?? '-',
-    address: customer.address,
+    taxId: customer.taxId ?? '',
+    address: customer.address ?? '',
   }
 }
 
@@ -49,11 +49,14 @@ export function CreateInvoicePage() {
   const customersError = useCustomersStore((state) => state.error)
   const loadCustomersByOrganization = useCustomersStore((state) => state.loadCustomersByOrganization)
   const addCustomer = useCustomersStore((state) => state.addCustomer)
+  const saveCustomerDetails = useCustomersStore((state) => state.saveCustomerDetails)
   const [issueDate, setIssueDate] = useState('2026-02-24')
   const [dueDate, setDueDate] = useState('2026-03-24')
   const [customerSearch, setCustomerSearch] = useState('')
   const [notes, setNotes] = useState('')
   const [customer, setCustomer] = useState<CustomerData | null>(null)
+  const [isEditingCustomer, setIsEditingCustomer] = useState(false)
+  const [isSavingCustomer, setIsSavingCustomer] = useState(false)
   const [lineItems, setLineItems] = useState<InvoiceLineItem[]>([createEmptyLineItem(1)])
 
   useEffect(() => {
@@ -87,6 +90,15 @@ export function CreateInvoicePage() {
       })),
     [filteredCustomers],
   )
+
+  const exactCustomerMatch = useMemo(() => {
+    const query = customerSearch.trim().toLowerCase()
+    if (!query) {
+      return null
+    }
+
+    return customers.find((item) => item.companyName.trim().toLowerCase() === query) ?? null
+  }, [customerSearch, customers])
 
   const subtotal = useMemo(
     () => lineItems.reduce((accumulator, item) => accumulator + item.quantity * item.unitPrice, 0),
@@ -136,6 +148,7 @@ export function CreateInvoicePage() {
 
     setCustomer(mapCustomerData(match))
     setCustomerSearch(match.companyName)
+    setIsEditingCustomer(false)
   }
 
   const handleSelectCustomerByName = (companyName: string) => {
@@ -159,6 +172,32 @@ export function CreateInvoicePage() {
     }
 
     setCustomer(mapCustomerData(customerRecord))
+    setIsEditingCustomer(true)
+  }
+
+  const handleClearCustomerSearch = () => {
+    setCustomerSearch('')
+  }
+
+  const handleSaveCustomerDetails = async () => {
+    if (!customer) {
+      return
+    }
+
+    setIsSavingCustomer(true)
+    const updatedCustomer = await saveCustomerDetails(
+      customer.id,
+      customer.taxId.trim(),
+      customer.address.trim(),
+    )
+    setIsSavingCustomer(false)
+
+    if (!updatedCustomer) {
+      return
+    }
+
+    setCustomer(mapCustomerData(updatedCustomer))
+    setIsEditingCustomer(false)
   }
 
   return (
@@ -189,7 +228,12 @@ export function CreateInvoicePage() {
             >
               <Input placeholder="Search customer..." />
             </AutoComplete>
-            <Button onClick={handleAddCustomer}>Add New</Button>
+            <Button
+              onClick={exactCustomerMatch ? handleClearCustomerSearch : handleAddCustomer}
+              disabled={!customerSearch.trim()}
+            >
+              {exactCustomerMatch ? 'Clear' : 'Add New'}
+            </Button>
           </Flex>
           {customersLoading ? <Typography.Text type="secondary">Loading customers...</Typography.Text> : null}
           {customersError ? <Typography.Text type="danger">{customersError}</Typography.Text> : null}
@@ -203,7 +247,24 @@ export function CreateInvoicePage() {
               companyName={customer.companyName}
               taxId={customer.taxId}
               address={customer.address}
-              onClear={() => setCustomer(null)}
+              isEditing={isEditingCustomer}
+              isSaving={isSavingCustomer}
+              onStartEdit={() => setIsEditingCustomer(true)}
+              onTaxIdChange={(value) =>
+                setCustomer((currentCustomer) =>
+                  currentCustomer ? { ...currentCustomer, taxId: value } : currentCustomer,
+                )
+              }
+              onAddressChange={(value) =>
+                setCustomer((currentCustomer) =>
+                  currentCustomer ? { ...currentCustomer, address: value } : currentCustomer,
+                )
+              }
+              onSave={handleSaveCustomerDetails}
+              onClear={() => {
+                setCustomer(null)
+                setIsEditingCustomer(false)
+              }}
             />
           ) : null}
         </div>

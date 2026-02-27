@@ -1,5 +1,9 @@
 import { create } from 'zustand'
-import { createCustomer, fetchCustomersByOrganization } from '@/features/customers/customers.service'
+import {
+  createCustomer,
+  fetchCustomersByOrganization,
+  updateCustomer,
+} from '@/features/customers/customers.service'
 import type { Customer } from '@/features/customers/customers.types'
 
 type CustomersState = {
@@ -8,6 +12,7 @@ type CustomersState = {
   error: string | null
   loadCustomersByOrganization: (organizationId: string) => Promise<void>
   addCustomer: (organizationId: string, companyName: string) => Promise<Customer | null>
+  saveCustomerDetails: (customerId: string, taxId: string, address: string) => Promise<Customer | null>
 }
 
 export const useCustomersStore = create<CustomersState>((set) => ({
@@ -32,6 +37,22 @@ export const useCustomersStore = create<CustomersState>((set) => ({
       return customer
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create customer'
+      set({ error: errorMessage })
+      return null
+    }
+  },
+  saveCustomerDetails: async (customerId: string, taxId: string, address: string) => {
+    set({ error: null })
+
+    try {
+      const customer = await updateCustomer({ customerId, taxId, address })
+      set((state) => ({
+        customers: state.customers.map((item) => (item.$id === customer.$id ? customer : item)),
+        error: null,
+      }))
+      return customer
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save customer details'
       set({ error: errorMessage })
       return null
     }
